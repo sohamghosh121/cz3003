@@ -9,9 +9,14 @@ from django.contrib.gis.geos import Point
 from django.test import TestCase
 
 class WeatherAPI:
+	"""
+		WeatherAPI Class for weather.py
+	"""
 	NOWCAST_URL = "http://www.nea.gov.sg/api/WebAPI/?dataset=2hr_nowcast&keyref=781CF461BB6606AD62B1E1CAA87ECA614712A08DDD7A7DC7"
 	def pullUpdate(self): 
-		"pulls nowcast weather info from NEA"
+		"""
+			pulls nowcast weather info from NEA
+		"""
 		r = requests.get(self.NOWCAST_URL)
 		if (r.status_code == 200):
 			root = ElementTree.fromstring(r.content)
