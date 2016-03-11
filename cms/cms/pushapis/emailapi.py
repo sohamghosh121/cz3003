@@ -15,5 +15,4 @@ class EmailAPI:
         message.set_from("barkatthetree@gmail.com")
         message.set_subject(subject)
         message.set_html(message)
-
         self.client.send(message)
