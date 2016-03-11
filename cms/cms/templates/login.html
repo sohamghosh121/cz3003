@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+</head>
+
+<style>
+.logo {
+	width: 300px;
+	margin: auto;
+	margin-top: 40px;
+	display: block;
+}
+
+.info-side {
+	text-align: center;
+	border-right: 1px solid #979797;
+	height: 100vh;
+}
+
+input {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+</style>
+{% block content %}
+<div class="container row">
+	<div class="col-md-9 info-side">
+		<img src="{% static 'img/logo2.png' %}" class="logo"/>
+		<h1> Dashboard </h1>
+	</div>
+	<div class="col-md-3">
+		<form class="form-signin" action="/login" method="post">
+			{% csrf_token %}
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<input name="username" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+			<input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		</form>
+	</div>
+
+
+</div>
+
+
+{% endblock %}
