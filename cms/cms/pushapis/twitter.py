@@ -1,7 +1,6 @@
 """
     Twitter API
 """
-
 import tweepy
 
 

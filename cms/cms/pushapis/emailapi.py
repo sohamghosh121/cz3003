@@ -17,7 +17,3 @@ class EmailAPI:
         message.set_html(message)
 
         self.client.send(message)
-
-if __name__ == '__main__':
-    em = EmailAPI()
-    em.pushUpdate('HIIIIII', 'This works!')
