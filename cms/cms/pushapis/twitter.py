@@ -1,8 +1,9 @@
 """
-    FB API
+    Twitter API
 """
 
 import requests
+import tweepy
 
 
 class TwitterAPI:
@@ -10,16 +11,21 @@ class TwitterAPI:
     API_SECRET = 'XTXYkDtRTZMpKlUD3SkPtudBl6dH4uQWSA1ClqVQFYd07DkQe1'
     ACCESS_TOKEN = '708263718585372672-DoPcGuN849xdwPmIaYjAknYDsAA3iVF'
     ACCESS_SECRET = 'OtnBKub9qERxOLIfqswkAYSPJ7j2R9V3kLhaUzjSkL7dD'
-    AUTHORIZE_URL = 'https://api.twitter.com/1.1/statuses/update.json'
-    UPDATE_URL = 'http://graph.facebook.com/v2.5/446011332261774/feed'
 
-    def pushUpdate(self, message):
-        r = requests.get(self.UPDATE_URL, params={'status': message})
-        if r.status_code == 200:
-            print(r.text)
-        else:
-            print(r.status_code)
+    def pushUpdate(self, tweet):
+        api = self.get_api({
+            "consumer_key": self.API_KEY,
+            "consumer_secret": self.API_SECRET,
+            "access_token": self.ACCESS_TOKEN,
+            "access_token_secret": self.ACCESS_SECRET
+        })
+        status = api.update_status(status=tweet)
+
+    def get_api(self, cfg):
+        auth = tweepy.OAuthHandler(cfg['consumer_key'], cfg['consumer_secret'])
+        auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
+        return tweepy.API(auth)
 
 if __name__ == '__main__':
-    fb = FacebookAPI()
-    fb.pushUpdate('Test')
+    tw = TwitterAPI()
+    tw.pushUpdate('Test')

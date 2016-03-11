@@ -2,7 +2,7 @@
     FB API
 """
 
-import tweepy
+import requests
 
 
 class FacebookAPI:
