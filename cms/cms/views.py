@@ -14,8 +14,7 @@ def healthCheck(request):
     return HttpResponse('It\'s all good!')
 
 
-@login_required
-def render_tab_view(request, tabs, data={}):
+def renderTabView(request, tabs, data={}):
     active_tab = tabs.get_active_tab()
     partner = Partner.objects.get(id=1)
     if active_tab:
@@ -26,3 +25,12 @@ def render_tab_view(request, tabs, data={}):
                        'partner_name': partner.name})
     else:
         return HttpResponse('ERROR')
+
+
+def newEvent(request):
+    if request.method == 'GET':
+        tabs = TabViews()
+        tabs.set_active_tab('map')
+        return renderTabView(request, tabs)
+    elif request.method == 'POST':
+        return HttpResponse('ok')
