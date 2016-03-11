@@ -22,19 +22,23 @@ class Event(models.Model):
     )
 
     operator = models.ForeignKey(Operator)
+    name = models.CharField(max_length=128, default='')
     isactive = models.BooleanField(default=True)
-    description = models.TextField()
-    numCasualties = models.IntegerField(default=0)
+    description = models.TextField(default='')
+    num_casualties = models.IntegerField(default=0)
     num_injured = models.IntegerField(default=0)
     date_recorded = models.DateTimeField(auto_now=True)
-    location = gismodels.PointField()
+    location = gismodels.PointField(blank=True)
     contact_number = models.CharField(max_length=8, blank=True)
     assistance_required = models.CharField(
         max_length=3, choices=ASSISTANCE_CHOICES)
 
+    class Meta:
+        abstract = True
+
 
 class TrafficEvent(Event):
-    numVehicles = models.IntegerField(default=0)
+    num_vehicles = models.IntegerField(default=0)
 
 
 class TerroristEvent(Event):
@@ -46,5 +50,5 @@ class TerroristEvent(Event):
         (BIOCHEMICAL, 'Biochemical'),
         (HOSTAGE, 'Hostage')
     )
-    numHostiles = models.IntegerField(default=0)
-    attackType = models.CharField(max_length=3, choices=TYPE_CHOICES)
+    num_hostiles = models.IntegerField(default=0)
+    attack_type = models.CharField(max_length=3, choices=TYPE_CHOICES)

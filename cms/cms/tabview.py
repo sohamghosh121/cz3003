@@ -53,7 +53,7 @@ class TabViews:
                 return tab
 
 
-class OperatorTabViews:
+class OperatorTabViews(TabViews):
 
     def __init__(self):
-        self.tabs = []
+        self.tabs = [NewEventView(), MapView()]
