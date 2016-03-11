@@ -34,3 +34,36 @@ def newEvent(request):
         return renderTabView(request, tabs)
     elif request.method == 'POST':
         return HttpResponse('ok')
+
+
+def loginView(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return redirect('google.com.sg')
+        else:
+            # Return a 'disabled account' error message
+            return HttpResponse("Disabled account")
+    else:
+        # Return an 'invalid login' error message.
+        return HttpResponse("Invalid login")
+
+
+def logoutView(request):
+    logout(request)
+    return redirect('google.com.sg')
+
+
+def submit_event(request):
+    return None
+
+
+def map_view(request):
+    return None
+
+
+def list_event_view(request):
+    return None
