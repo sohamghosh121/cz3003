@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cms'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -78,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'cms',
-        'USER': 'sohamghosh',
+        'USER': 'ian',
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
