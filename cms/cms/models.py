@@ -12,10 +12,10 @@ class Admin(User):
 
 
 class Event(models.Model):
-	AMBULANCE = 'AMB'
+    AMBULANCE = 'AMB'
     RESCUE = 'RES'
     EVACUATION = 'EVA'
-    TYPE_CHOICES = (
+    ASSISTANCE_CHOICES = (
         (AMBULANCE, 'Ambulance'),
         (RESCUE, 'Rescue'),
         (EVACUATION, 'Evacuation')
@@ -28,8 +28,9 @@ class Event(models.Model):
     num_injured = models.IntegerField(default=0)
     date_recorded = models.DateTimeField(auto_now=True)
     location = gismodels.PointField()
-    contact_number = models.CharField(max_length=8)
-    assistance_required = models.CharField(max_length=3, choices=ASSISTANCE_CHOICES)
+    contact_number = models.CharField(max_length=8, blank=True)
+    assistance_required = models.CharField(
+        max_length=3, choices=ASSISTANCE_CHOICES)
 
 
 class TrafficEvent(Event):
