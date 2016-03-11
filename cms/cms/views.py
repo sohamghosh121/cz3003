@@ -26,3 +26,27 @@ def render_tab_view(request, tabs, data={}):
                        'partner_name': partner.name})
     else:
         return HttpResponse('ERROR')
+
+def login_view(request):
+
+def my_view(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return redirect('google.com.sg')
+        else:
+            # Return a 'disabled account' error message
+            return HttpResponse("Disabled account")
+    else:
+        # Return an 'invalid login' error message.
+        return HttpResponse("Invalid login")
+def logout_view(request):
+  logout(request)
+  return redirect('google.com.sg')
+  
+def submit_event(request):
+def map_view(request):
+def list_event_view(request)
