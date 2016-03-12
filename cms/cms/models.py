@@ -16,8 +16,10 @@ class Dengue(models.Model):
     case_size = models.SmallIntegerField(blank=True, null=True)
     name = models.CharField(max_length=254, blank=True, null=True)
     hyperlink = models.CharField(max_length=254, blank=True, null=True)
-    shape_leng = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    shape_area = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_leng = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_area = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True)
     geom = gismodels.GeometryField(blank=True, null=True)
 
     class Meta:
@@ -34,6 +36,7 @@ class Dengue(models.Model):
 # User.add_to_class("isOperator", isOperator)
 # User.add_to_class("isAdmin", isAdmin)
 
+
 class Operator(User):
     name = models.CharField(max_length=256, default='')
 
@@ -44,6 +47,7 @@ class Operator(User):
     # # @override
     # def isAdmin(self):
     #     return False
+
 
 class Admin(User):
     name = models.CharField(max_length=256, default='')
@@ -57,6 +61,12 @@ class Admin(User):
     #     return True
 
 
+class Reporter(models.Model):
+    name = models.CharField(max_length=128, default='')
+    identification = models.CharField(max_length=10, primary_key=True)
+    contact_number = models.CharField(max_length=8, blank=True)
+
+
 class Event(models.Model):
     AMBULANCE = 'AMB'
     RESCUE = 'RES'
@@ -67,15 +77,17 @@ class Event(models.Model):
         (EVACUATION, 'Evacuation')
     )
 
-    operator = models.ForeignKey(Operator)
-    name = models.CharField(max_length=128, default='')
+    operator = models.ManyToManyField(Operator)
+    first_responder = models.ForeignKey(
+        Reporter, related_name='first_responder')
+    reporters = models.ManyToManyField(
+        Reporter, blank=True, related_name='other_responders')
     isactive = models.BooleanField(default=True)
     description = models.TextField(default='')
     num_casualties = models.IntegerField(default=0)
     num_injured = models.IntegerField(default=0)
     date_recorded = models.DateTimeField(auto_now=True)
     location = gismodels.PointField(blank=True)
-    contact_number = models.CharField(max_length=8, blank=True)
     assistance_required = models.CharField(
         max_length=3, choices=ASSISTANCE_CHOICES)
 
@@ -104,6 +116,10 @@ class EventTransactionLog(models.Model):
     transaction_type = models.CharField(
         max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
     operator = models.ForeignKey(Operator, blank=True, null=True)
+    reporter = models.ForeignKey(Reporter, blank=True, null=True)
+    admin = models.ForeignKey(Admin, blank=True, null=True)
+    desc = models.CharField(max_length=1024, blank=True)
+    date_transaction = models.DateTimeField(auto_now=True)
 
 
 class Singapore(models.Model):

@@ -175,9 +175,14 @@
         });
         $('.filter-option input[type="checkbox"]').change(function(){
                     filters = [];
+                    map.data.forEach(function(feature) { // remove all
+                        map.data.remove(feature);
+                    });
+                    // add all
                     map.data.addGeoJson(weatherGeoJSON);
                     map.data.addGeoJson(eventsGeoJSON);
                     map.data.addGeoJson(dengueGeoJSON);
+                    // selectively remove
                     $('input[name="filter"]:checked').each(function(idx, elem){
                         filters.push($(elem).val());
                     });

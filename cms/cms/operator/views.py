@@ -1,7 +1,9 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from ..views import renderTabView
+from ..views import renderTabView, isOperator, isAdmin
+from django.shortcuts import render, redirect
 from django.contrib.gis.geos import Point
-from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator
+from django.contrib.auth.decorators import login_required
+from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter
 from tabview import OperatorTabViews
 
 
@@ -13,10 +15,68 @@ def latLngToPoint(stringobj):
     lat, lng = stringobj.split(',')
     return Point(float(lng), float(lat))
 
-# @login_required
+
+def updateEvent(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
+    if request.method == 'POST':
+        reporter = {}
+        eventtype = request.POST.get('eventtype')
+        event_id = request.POST.get('eventid')
+        reporter['identification'] = request.POST.get('identification')
+        try:
+            reporter = Reporter.objects.get(
+                identification=reporter['identification'])
+        except Reporter.DoesNotExist:
+            reporter['name'] = request.POST.get('name')
+            reporter['contact_number'] = request.POST.get('contact')
+            reporter = Reporter.objects.create(
+                **reporter)
+            reporter.save()
+        edit_string = []
+        if eventtype == 'traffic':
+            event = TrafficEvent.objects.get(id=event_id)
+            if event.num_vehicles != int(request.POST.get('numVehicles')):
+                event.num_vehicles = int(request.POST.get('numVehicles'))
+                edit_string.append('UPDATE num_vehicles')
+        elif eventtype == 'terrorist':
+            event = TerroristEvent.objects.get(id=event_id)
+            if event.num_hostiles != int(request.POST.get('numHostiles')):
+                event.num_hostiles = int(request.POST.get('numHostiles'))
+                edit_string.append('UPDATE num_hostiles')
+        if event.event.num_casualties != int(request.POST.get('numCasualties')):
+            event.event.num_casualties = int(request.POST.get('numCasualties'))
+            edit_string.append('UPDATE num_casualties')
+        if event.event.num_injured != int(request.POST.get('numInjured')):
+            event.event.num_injured = int(request.POST.get('numInjured'))
+            edit_string.append('UPDATE num_injured')
+        if event.event.description != request.POST.get('description'):
+            event.event.description = request.POST.get('description')
+            edit_string.append('UPDATE description')
+        event.event.save()
+        event.save()
+
+        operator = Operator.objects.get(user_ptr_id=request.user.id)
+        if operator not in event.event.operator.all():
+            event.event.operator.add(operator)
+        if reporter not in event.event.reporter.all() or reporter != event.event.first_responder:
+            event.event.reporters.add(reporter)
+        eventlog = EventTransactionLog.objects.create(
+            event=event.event,
+            transaction_type='ED',
+            operator=operator,
+            reporter=reporter,
+            desc=','.join(edit_string))
+        eventlog.save()
+        return redirect('/operator/list')
+    else:
+        return HttpResponseBadRequest()
 
 
+@login_required
 def newEvent(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     if request.method == 'GET':
         tabs = OperatorTabViews()
         tabs.set_active_tab('newevent')
@@ -26,18 +86,29 @@ def newEvent(request):
         return renderTabView(request, tabs, data)
     elif request.method == 'POST':
         eventDetails = {}
+        reporter = {}
         eventtype = request.POST.get('eventtype')
-        eventDetails['name'] = request.POST.get('name')
-        eventDetails['operator'] = Operator.objects.get(user_ptr_id=1)
-        eventDetails['contact_number'] = request.POST.get('contact')
+        reporter['identification'] = request.POST.get('identification')
+        try:
+            eventDetails['first_responder'] = Reporter.objects.get(
+                identification=reporter['identification'])
+        except Reporter.DoesNotExist:
+            reporter['name'] = request.POST.get('name')
+            reporter['contact_number'] = request.POST.get('contact')
+            eventDetails['first_responder'] = Reporter.objects.create(
+                **reporter)
+            eventDetails['first_responder'] .save()
+
+        operator = Operator.objects.get(user_ptr_id=request.user.id)
         eventDetails['description'] = request.POST.get('description')
         eventDetails['num_casualties'] = int(request.POST.get('numCasualties'))
         eventDetails['num_injured'] = int(request.POST.get('numInjured'))
         eventDetails['location'] = latLngToPoint(request.POST.get('location'))
         event = Event.objects.create(**eventDetails)
         event.save()
+        event.operator.add(operator)
         eventlog = EventTransactionLog.objects.create(
-            event=event, transaction_type='CR', operator=Operator.objects.get(user_ptr_id=1))  # add the operator in later
+            event=event, transaction_type='CR', operator=operator)  # add the operator in later
         eventlog.save()
         if eventtype:
             specificEventDetails = {'event': event}
@@ -58,32 +129,57 @@ def newEvent(request):
         return HttpResponseBadRequest('nok')
 
 
+@login_required
 def listEvents(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('list')
     return renderTabView(request, tabs, {
-        'trafficevents': TrafficEvent.objects.all(),
-        'terroristevents': TerroristEvent.objects.all()
+        'trafficevents': TrafficEvent.objects.filter(event__isactive=True),
+        'terroristevents': TerroristEvent.objects.filter(event__isactive=True)
     })
 
 
+@login_required
 def mapEvents(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('map')
     return renderTabView(request, tabs, {})
 
 
 def getEventType(event):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
         return 'terrorist'
 
 
+def getEventUpdateForm(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
+    context = {}
+    event_id = request.GET.get('eventid')
+    context['eventtype'] = request.GET.get('eventtype')
+    if context['eventtype'] == 'traffic':
+        context['event'] = TrafficEvent.objects.get(id=event_id)
+    elif context['eventtype'] == 'terrorist':
+        context['event'] = TerroristEvent.objects.get(id=event_id)
+    else:
+        return HttpResponseBadRequest()
+    return render(request, 'operator/updateEventForm.html', context)
+
+
 def getEvents(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     events_list = []
-    events_list.extend(TrafficEvent.objects.all())
-    events_list.extend(TerroristEvent.objects.all())
+    events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
+    events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
     events_list = [{
         'type': getEventType(e),
         'details': e
@@ -94,6 +190,8 @@ def getEvents(request):
 
 
 def getEventTypeIcon(eventtype):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     if eventtype == 'traffic':
         return 'caraccident.png'
     elif eventtype == 'terrorist':
@@ -101,6 +199,8 @@ def getEventTypeIcon(eventtype):
 
 
 def getEventsGeoJSON(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
     data = {}
     geojson = {'type': 'FeatureCollection', 'features': []}
     events = getEvents(request)
@@ -114,9 +214,9 @@ def getEventsGeoJSON(request):
             'type': event['type'],
             'icon': getEventTypeIcon(event['type']),
             'event': {
-                'name': event['details'].event.name,
+                'name': event['details'].event.first_responder.name,
                 'description': event['details'].event.description,
-                'operator': event['details'].event.operator.name
+                'operator': event['details'].event.operator.all()[0].name
             }
         }
     } for event in events]
