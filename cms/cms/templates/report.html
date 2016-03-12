@@ -1,21 +1,120 @@
-<!-- {% load staticfiles %} -->
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<script src="js/report.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+	<style>
+		ol li{
+			font-size: 200%;
+		}
+		ul li{
+			font-size: 100%;
+		}	
+	</style>
 </head>
+
 <body>
 	<h1 style="text-align:center"><b>Automatically generated report by CMS System</b></h1>
 	<ol>
-		<li><h3>Period of time:</h3></li>
-		<li><h3>Haze condition:</h3></li>
-		<li><h3>Dengue hotspots:</h3></li>
-		<li><h3>Traffic accidents:</h3></li>
-		<li><h3>Terrorist attacks:</h3></li>
-		<li><h3>Crisis levlel:</h3></li>
+		<li id='time'></li>
+		<li>Haze condition:</li>
+		<li>Dengue hotspots:</li>
+		<li>Traffic accidents:
+			<ul>
+				<li id='accidents'></li>
+				<li id='vehicles'></li>
+				<li id='traffic-casualties'></li>
+				<li id='traffic-injuries'></li>
+				<li id='traffic-locations'></li>
+			</ul>
+		</li>
+		<li>Terrorist attacks:
+			<ul>
+				<li id='attacks'></li>
+				<li id='hostiles'></li>
+				<li id='terrorist-casualties'></li>
+				<li id='terrorist-injuries'></li>
+				<li id='terrorist-locations'></li>
+				<li id='terrorist-types'></li>
+			</ul>
+		</li>
+		<li>Crisis level:</li>
 	</ol>
+	<script>
+		var datetime = document.getElementById('time');
+		var endDateTime = Date.now();
+		var startDateTime = endDateTime - 30*60*1000;
+		endDateTime = new Date(endDateTime);
+		startDateTime = new Date(startDateTime);
+		datetime.innerHTML = "<b>Time period:</b> " + startDateTime.toLocaleString() + " - " + endDateTime.toLocaleString();
+
+		function displayTraffic(data){
+			var accidents = document.getElementById('accidents');
+			var vehicles = document.getElementById('vehicles');
+			var trafficCasualties = document.getElementById('traffic-casualties');
+			var trafficInjuries = document.getElementById('traffic-injuries');
+			var trafficLocations = document.getElementById('traffic-locations');
+
+			accidents.innerHTML = "Number of accidents: " + data['numTraffics'];
+			vehicles.innerHTML = "Number of vehicle involved: " + data['numVehicles'];
+			trafficCasualties.innerHTML = "Number of casualties: " + data['numCasualties'];
+			trafficInjuries.innerHTML = "Number of injuries: " + data['numInjuries'];
+			locationString = "Locations of accidents: ";
+			locations = data['locations'];
+			for(var i = 0;i < locations.length; i++){
+				locationString += locations[i];
+				locationString += ", ";
+			}
+			trafficLocations.innerHTML = locationString;
+		}
+
+		function displayTerrorist(data){
+			var attacks = document.getElementById('attacks');
+			var hostiles = document.getElementById('hostiles');
+			var terroristCasualties = document.getElementById('terrorist-casualties');
+			var terroristInjuries = document.getElementById('terrorist-injuries');
+			var terroristLocations = document.getElementById('terrorist-locations');
+			var terroristTypes = document.getElementById('terrorist-types');
+
+			attacks.innerHTML = "Number of attacks: " + data['numAttacks'];
+			hostiles.innerHTML = "Number of hostiles: " + data['numHostiles'];
+			terroristCasualties.innerHTML = "Number of casualties: " + data['numCasualties'];
+			terroristInjuries.innerHTML = "Number of injuries: " + data['numInjuries'];
+
+			locationString = "Locations of attacks: ";
+			locations = data['locations'];
+			for(var i = 0;i < locations.length; i++){
+				locationString += locations[i];
+				locationString += ", ";
+			}
+			terroristLocations.innerHTML = locationString;
+
+			var typeString = "Types of attacks: ";
+			var types = data['attackTypes']; 
+			for(var i = 0;i < types.length; i++){
+				typeString += types[i];
+				typeString += ", ";
+			}
+			terroristTypes.innerHTML = typeString;
+		}
+
+		$.ajax({
+			url: 'getTrafficInfo',
+			data: {},
+			dataType: 'json'
+		}).done(function (data) {
+			displayTraffic(data);
+		});
+
+		$.ajax({
+			url: 'getTerroristInfo',
+			data: {},
+			dataType: 'json'
+		}).done(function (data) {
+			displayTerrorist(data);
+		});
+	</script>
 </body>

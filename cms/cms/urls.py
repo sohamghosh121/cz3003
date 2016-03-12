@@ -21,12 +21,14 @@ import views
 import settings
 import operator.urls
 import admin.urls
+import report.urls
 
 urlpatterns = [
     url(r'^djangoadmin/', include(djangoadmin.site.urls)),
     url(r'^healthCheck/', views.healthCheck),
     url(r'^operator/', include('cms.operator.urls')),
     url(r'^admin/', include('cms.admin.urls')),
+    url(r'^report/', include('cms.report.urls')),
     url(r'^login_view', views.loginView),
     url(r'^login/', TemplateView.as_view(template_name='login.html')),
     url(r'^report/', TemplateView.as_view(template_name='report.html')),
