@@ -5,6 +5,9 @@
 import requests
 import zipfile
 import os
+import json
+from cms.models import Dengue
+from django.core.serializers import serialize
 from pullapi import PullAPI
 
 
@@ -41,7 +44,7 @@ class DengueAPI(PullAPI):
             return False
 
     def updateDengueInfoInDatabase(self, fileDirectory):
-        command_to_run = "shp2pgsql -d -W LATIN1 %s cms_dengue | psql -d cms" % fileDirectory
+        command_to_run = "shp2pgsql -s 3414 -d -W LATIN1 %s cms_dengue | psql -d cms" % fileDirectory
         os.system(command_to_run)
 
     def pullUpdate(self):
@@ -52,3 +55,13 @@ class DengueAPI(PullAPI):
                 self.updateDengueInfoInDatabase(fileDirectory)
                 return True
         return False
+
+    def returnGeoJson(self):
+        DengueAPI().pullUpdate()
+        dengue = Dengue.objects.all()
+        for d in dengue:
+            print d.geom
+        denguejson = json.loads(serialize('geojson', dengue))
+        for x in denguejson['features']:
+            x['properties']['type'] = 'dengue'
+        return denguejson

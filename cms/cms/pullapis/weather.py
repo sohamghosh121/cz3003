@@ -1,5 +1,5 @@
 """
-	Weather API from NEA
+    Weather API from NEA
 """
 
 import requests

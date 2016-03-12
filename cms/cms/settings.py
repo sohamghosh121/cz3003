@@ -81,13 +81,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'cms',
-        'USER': 'sohamghosh',
-        'PASSWORD': '',
+        'USER': os.getlogin(),
+        'PASSWORD': None,
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': None,
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -138,3 +137,8 @@ CELERYBEAT_SCHEDULE = {
         'args': ()
     },
 }
+
+#DJANGO SERIALIZER
+SERIALIZATION_MODULES = {
+    "geojson": "django.contrib.gis.serializers.geojson", 
+ }
