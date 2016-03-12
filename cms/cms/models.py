@@ -133,8 +133,8 @@ class Districts(models.Model):
     center = gismodels.PointField(blank=True, null=True)
 
 class CrisisTransactionLog(models.Model):
-    old_crisis = models.PositiveSmallIntegerField()
     new_crisis = models.PositiveSmallIntegerField()
     admin = models.ForeignKey(Admin, blank=True, null=True)
+    district = models.CharField(max_length=10)
     date_recorded = models.DateTimeField(auto_now=True)
 

@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^log/', views.getTransactionLog),
     url(r'^crisis', views.getCrisisView),
     url(r'^getDistricts', views.getDistricts),
-    # url(r'^setCrisis', views.setCrisis)
+    url(r'^setCrisis', views.setCrisis)
 ]

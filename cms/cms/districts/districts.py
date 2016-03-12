@@ -1,7 +1,7 @@
 import os
 import json
 from django.core.serializers import serialize
-from cms.models import Singapore, Districts
+from cms.models import Singapore, Districts, CrisisTransactionLog
 from django.contrib.gis.geos import Point
 
 class DistrictManager():
@@ -38,8 +38,6 @@ class DistrictManager():
 		""" 
 			returns GeoJsonData for district boundaries
 		"""
-		print "hello"
-		DistrictManager().importDistricts()
 		singapore = Singapore.objects.all()
 		singaporeJson = json.loads(serialize('geojson', singapore))
 		for x in singaporeJson['features']:
@@ -47,4 +45,18 @@ class DistrictManager():
 			x['properties']['crisis'] = Districts.objects.get(district = x['properties']['name_1']).crisis
 			x['properties']['center'] = [float(Districts.objects.get(district = x['properties']['name_1']).center.x), float(Districts.objects.get(district = x['properties']['name_1']).center.y)]
 		return singaporeJson
-		
+
+class CrisisManager () :
+	""" 
+		Handle changing of crisis levels and crisis log
+	"""
+	def setCrisisLevel(self, district_to_set, crisis_to_set, admin):
+		"""
+			Sets crisis level of a specified district and add to log
+		"""
+		d = Districts.objects.get(district = district_to_set)
+		if (d is not None):
+			d.crisis = crisis_to_set
+			d.save()
+		log = CrisisTransactionLog(district = district_to_set, new_crisis= crisis_to_set)
+		log.save()

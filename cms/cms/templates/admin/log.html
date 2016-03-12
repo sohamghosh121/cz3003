@@ -154,7 +154,7 @@
 			<tr>
 				<th>District</th>
 				<th>New Crisis Level</th>
-				<th>Old Crisis Level</th>
+				<th>Admin ID</th>
 				<th>Time</th>
 			</tr>
 		</thead>
@@ -162,11 +162,12 @@
 
 		<!-- Table Body -->
 		<tbody>
-			{% for event in data.transactionLog %}
+			{% for log in data.crisisLogDatabase %}
 				<tr {% if forloop.counter0|divisibleby:2 %} class='even'{% endif %}>
-					<td>Create pretty table design</td>
-					<td>100%</td>
-					<td>Yes</td>
+					<td>{{log.district}}</td>
+					<td>{{log.new_crisis}}</td>
+					<td>{{log.admin}}</td>
+					<td>{{log.date_recorded}}</td>
 				</tr>
 			{% endfor %}
 		</tbody>

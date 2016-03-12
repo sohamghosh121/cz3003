@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Singapore, CrisisTransactionLog
 from tabview import AdminTabViews
 from ..views import renderTabView
-from ..districts.districts import DistrictManager
+from ..districts.districts import DistrictManager, CrisisManager
 
 
 def healthCheck(request):
@@ -12,7 +12,8 @@ def getTransactionLog(request):
 	tabs = AdminTabViews()
 	tabs.set_active_tab('log')
 	return renderTabView(request, tabs, {
-        'transactionLog': EventTransactionLog.objects.all()
+        'transactionLog': EventTransactionLog.objects.all(),
+        'crisisLogDatabase': CrisisTransactionLog.objects.all()
     })
 
 def getCrisisView(request):
@@ -22,10 +23,11 @@ def getCrisisView(request):
 	tabs = AdminTabViews()
 	tabs.set_active_tab('crisis')
 	return renderTabView(request, tabs, {
-        'crisisLogDatabase': CrisisTransactionLog
     })
 
 def getDistricts(request):
 	return JsonResponse(DistrictManager().returnGeoJson(), safe=False)
 
-# def setCrisis(request):
+def setCrisis(request):
+	CrisisManager().setCrisisLevel(request.GET.get('district'), request.GET.get('newcrisis'), None)
+	return HttpResponse("Success", content_type="text/plain")
