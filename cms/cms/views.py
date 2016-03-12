@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
+from models import Operator, Admin
 
 import os
 from tabview import TabViews
@@ -26,6 +27,17 @@ def renderTabView(request, tabs, data={}):
     else:
         return HttpResponse('ERROR')
 
+def isOperator(operatorList, username):
+    for operator in operatorList:
+        if operator.username == username:
+            return True
+    return False
+
+def isAdmin(adminList, username):
+    for admin in adminList:
+        if admin.username == username:
+            return True
+    return False
 
 def loginView(request):
     username = request.POST['username']
@@ -33,8 +45,13 @@ def loginView(request):
     user = authenticate(username=username, password=password)
     if user is not None:
         if user.is_active:
-            login(request, user)
-            return redirect('google.com.sg')
+            dologin(request, user)
+            operatorList = Operator.objects.all()
+            adminList = Admin.objects.all()
+            if isOperator(operatorList, username): #login as an operator
+                return redirect('https://www.google.com.sg/')
+            elif isAdmin(adminList, username): #login as an admin
+                return redirect('https://www.facebook.com/')
         else:
             # Return a 'disabled account' error message
             return HttpResponse("Disabled account")
