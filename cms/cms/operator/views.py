@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.gis.geos import Point
 from django.contrib.auth.decorators import login_required
 from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter
+from ..dispatchers.agencydispatcher import AgencyDispatcher
 from tabview import OperatorTabViews
 
 
@@ -55,7 +56,7 @@ def updateEvent(request):
             edit_string.append('UPDATE description')
         event.event.save()
         event.save()
-
+        AgencyDispatcher(event, 'EDIT').dispatch()  # dispatch to agencies
         operator = Operator.objects.get(user_ptr_id=request.user.id)
         if operator not in event.event.operator.all():
             event.event.operator.add(operator)
@@ -107,6 +108,7 @@ def newEvent(request):
         event = Event.objects.create(**eventDetails)
         event.save()
         event.operator.add(operator)
+
         eventlog = EventTransactionLog.objects.create(
             event=event, transaction_type='CR', operator=operator)  # add the operator in later
         eventlog.save()
@@ -125,6 +127,7 @@ def newEvent(request):
             else:
                 return HttpResponseBadRequest('nnok')
             newEvent.save()
+            AgencyDispatcher(newEvent, 'NEW').dispatch()
             return HttpResponse('ok')
         return HttpResponseBadRequest('nok')
 
@@ -151,8 +154,6 @@ def mapEvents(request):
 
 
 def getEventType(event):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
@@ -190,8 +191,6 @@ def getEvents(request):
 
 
 def getEventTypeIcon(eventtype):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
     if eventtype == 'traffic':
         return 'caraccident.png'
     elif eventtype == 'terrorist':

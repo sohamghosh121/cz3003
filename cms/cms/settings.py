@@ -115,7 +115,7 @@ STATICFILES_DIRS = (
 
 # Media files
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'arts/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'cms/media')
 MEDIA_URL = 'media/'
 
 BROKER_URL = 'redis://localhost:6379'
@@ -126,13 +126,13 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IMPORTS = ('cms.tasks')
 
 CELERYBEAT_SCHEDULE = {
-    # 'send-pmo-email-every-halfhour': {
-    #     'task': 'send_pmo_email',
-    #     'schedule': timedelta(seconds=1800),
-    #     'args': (['CHN'])
-    # },
+    'send-pmo-email-every-halfhour': {
+        'task': 'pmo-emailer',
+        'schedule': timedelta(seconds=30),
+        'args': ()
+    },
     'fetch-pull-apis': {
-        'task': 'do_pull_apis',
+        'task': 'do-pull-apis',
         'schedule': timedelta(seconds=10),
         'args': ()
     },

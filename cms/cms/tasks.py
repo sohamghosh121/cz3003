@@ -5,18 +5,26 @@ from celery import group
 from datetime import timedelta
 from cms.pullapis.dengue import DengueAPI
 from cms.pullapis.weather import WeatherAPI
+from cms.dispatchers.pmodispatcher import PMODispatcher
 
 
 logger = get_task_logger(__name__)
 
 
-@task(name="pmo_emailer", bind=True)
+@task(name="pmo-emailer", bind=True)
 def email_pmo(self):
-    return 'Not implemented yet'
+    """
+        Background task to send PMO email every half an hour
+    """
+    PMODispatcher().dispatch()
+    return 'Success'
 
 
-@task(name="do_pull_apis", bind=True)
+@task(name="do-pull-apis", bind=True)
 def pull_apis(self):
+    """
+        Background task to periodically pull APIs for weather and dengue
+    """
     apis = [WeatherAPI(), DengueAPI()]
     for api in apis:
         api.pullUpdate()
