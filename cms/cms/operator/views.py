@@ -95,9 +95,9 @@ def getEvents(request):
 
 def getEventTypeIcon(eventtype):
     if eventtype == 'traffic':
-        return '/static/img/caraccident.png'
+        return 'caraccident.png'
     elif eventtype == 'terrorist':
-        return '/static/img/terrorist.png'
+        return 'terrorist.png'
 
 
 def getEventsGeoJSON(request):
@@ -112,11 +112,17 @@ def getEventsGeoJSON(request):
         },
         'properties': {
             'type': event['type'],
-            'icon': getEventTypeIcon(event['type'])
+            'icon': getEventTypeIcon(event['type']),
+            'event': {
+                'name': event['details'].event.name,
+                'description': event['details'].event.description,
+                'operator': event['details'].event.operator.name
+            }
         }
     } for event in events]
     data['geojson'] = geojson
     return JsonResponse(data, safe=False)
+
 
 def pull_weather(request):
     return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)

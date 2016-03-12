@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from __future__ import absolute_import
 import os
+from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -79,13 +81,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'cms',
-        'USER': 'sohamghosh',
-        'PASSWORD': '',
+        'USER': os.getlogin(),
+        'PASSWORD': None,
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': None,
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -122,7 +123,7 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_IMPORTS = ('arts.tasks')
+CELERY_IMPORTS = ('cms.tasks')
 
 CELERYBEAT_SCHEDULE = {
     # 'send-pmo-email-every-halfhour': {
@@ -130,4 +131,14 @@ CELERYBEAT_SCHEDULE = {
     #     'schedule': timedelta(seconds=1800),
     #     'args': (['CHN'])
     # },
+    'fetch-pull-apis': {
+        'task': 'do_pull_apis',
+        'schedule': timedelta(seconds=10),
+        'args': ()
+    },
 }
+
+#DJANGO SERIALIZER
+SERIALIZATION_MODULES = {
+    "geojson": "django.contrib.gis.serializers.geojson", 
+ }
