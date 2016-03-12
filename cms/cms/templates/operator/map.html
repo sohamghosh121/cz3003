@@ -32,11 +32,14 @@
             map.data.setStyle(function(feature){
                 var icon = feature.getProperty('icon');
                 return {
-                    'icon': icon
+                    'icon': {
+                        url:icon,
+                        scaledSize: {
+                            'width': 30,
+                            'height': 30
+                        }
+                    }
                 };
-            });
-            $.each(data['legend'], function(i, d){
-                $('#legend-items').append('<span class="legend-item"><img src="' + d[1] + '"/> ' + d[0] + '</span>');
             });
     	}).fail(function(){
     		console.log('failed'); // some proper failure message

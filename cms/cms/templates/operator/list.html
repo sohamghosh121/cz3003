@@ -2,6 +2,7 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
+{% load staticfiles %}
 <style>
 .events-table {
 	width: 95%;
@@ -24,33 +25,33 @@
 .events-container {
 	margin-top: 25px;
 }
+
+.details-img {
+	width: 20px;
+	height:20px;
+	margin-left: 5px;
+}
+
+.table-label {
+	margin-left: 2.5%;
+	margin-bottom: 8px;
+	display:inline-block;
+	font-size: 1.25em;
+}
+
+.truncate {
+	  width: 250px;
+	  white-space: nowrap;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+}
 </style>
 
 <div class="row events-container traffic-events">
-	Traffic events:
+	<span class="table-label"> Traffic events: </span>
 	<table class="events-table">
 		<thead>
 			<tr>
-				<th> Name </th> <th> Contact Number </th> <th> Description </th> <th> Details </th> <th> </th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for event in trafficevents %}
-				<tr>
-					<td> {{ event.name }} </td> <td> {{event.contact_number}} </td> <td> {{event.description}} </td> <td> </td> <td> edit stuffsssss </td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-</div>
-
-
-<div class="row events-container terrorist-events">
-	Terrorist events:
-	<table class="events-table">
-		<thead>
-			<tr>
-				<th> <!-- icon --> </th> 
 				<th> Name </th> 
 				<th> Contact Number </th> 
 				<th> Description </th> 
@@ -59,13 +60,48 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for event in trafficevents %}
+			{% for event in data.trafficevents %}
 				<tr>
-					<td> {{ event.name }} </td> 
-					<td> {{event.contact_number}} </td> 
-					<td> {{event.description}} </td> 
-					<td> </td> 
-					<td>  </td>
+					<td> {{ event.event.name }} </td> 
+					<td> {{ event.event.contact_number}} </td> 
+					<td> {{ event.event.description}} </td> 
+					<td> 
+						<img src="{% static 'img/dead.png' %}" class="details-img"/>{{ event.event.num_casualties}} 
+						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}
+						<img src="{% static 'img/caraccident.png' %}" class="details-img"/>{{event.num_vehicles}}
+					</td> 
+					<td> edit stuffsssss </td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+
+<div class="row events-container terrorist-events">
+	<span class="table-label"> Terrorist events: </span>
+	<table class="events-table">
+		<thead>
+			<tr>
+				<th> Name </th> 
+				<th> Contact Number </th> 
+				<th>  <p class="truncate"> Description  </p></th> 
+				<th> Details </th> 
+				<th> </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for event in data.terroristevents %}
+				<tr>
+					<td> {{ event.event.name }} </td> 
+					<td> {{ event.event.contact_number}} </td> 
+					<td> <p class="truncate"> {{ event.event.description}} </p> </td> 
+					<td> 
+						<img src="{% static 'img/dead.png' %}" class="details-img"/> {{ event.event.num_casualties}} 
+						<img src="{% static 'img/injury.png' %}" class="details-img"/> {{event.event.num_injured}}
+						<img src="{% static 'img/terrorist.png' %}" class="details-img"/> {{event.num_hostiles}}
+					</td> 
+					<td> edit stuffsssss </td>
 				</tr>
 			{% endfor %}
 		</tbody>

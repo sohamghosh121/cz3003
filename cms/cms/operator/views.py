@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from ..views import renderTabView
-from ..models import TrafficEvent, TerroristEvent
+from django.contrib.gis.geos import Point
+from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator
 from tabview import OperatorTabViews
 
 
@@ -24,23 +25,32 @@ def newEvent(request):
         }
         return renderTabView(request, tabs, data)
     elif request.method == 'POST':
-        event = {}
+        eventDetails = {}
         eventtype = request.POST.get('eventtype')
-        event['name'] = request.POST.get('name')
-        event['operator'] = Operator.objects.get(id=1)
-        event['contact_number'] = request.POST.get('contact')
-        event['description'] = request.POST.get('description')
-        event['num_casualties'] = int(request.POST.get('numCasualties'))
-        event['num_injured'] = int(request.POST.get('numInjured'))
-        event['location'] = latLngToPoint(request.POST.get('location'))
+        eventDetails['name'] = request.POST.get('name')
+        eventDetails['operator'] = Operator.objects.get(user_ptr_id=1)
+        eventDetails['contact_number'] = request.POST.get('contact')
+        eventDetails['description'] = request.POST.get('description')
+        eventDetails['num_casualties'] = int(request.POST.get('numCasualties'))
+        eventDetails['num_injured'] = int(request.POST.get('numInjured'))
+        eventDetails['location'] = latLngToPoint(request.POST.get('location'))
+        event = Event.objects.create(**eventDetails)
+        event.save()
+        eventlog = EventTransactionLog.objects.create(
+            event=event, transaction_type='CR', operator=Operator.objects.get(user_ptr_id=1))  # add the operator in later
+        eventlog.save()
         if eventtype:
+            specificEventDetails = {'event': event}
             if eventtype == 'traffic':
-                event['num_vehicles'] = int(request.POST.get('numVehicles'))
-                newEvent = TrafficEvent.objects.create(**event)
+                specificEventDetails['num_vehicles'] = int(
+                    request.POST.get('numVehicles'))
+                newEvent = TrafficEvent.objects.create(**specificEventDetails)
             elif eventtype == 'terrorist':
-                event['num_hostiles'] = int(request.POST.get('numVehicles'))
-                event['attack_type'] = request.POST.get('attackType')
-                newEvent = TerroristEvent.objects.create(**event)
+                specificEventDetails['num_hostiles'] = int(
+                    request.POST.get('numHostiles'))
+                specificEventDetails[
+                    'attack_type'] = request.POST.get('attacktype')
+                newEvent = TerroristEvent.objects.create(**specificEventDetails)
             else:
                 return HttpResponseBadRequest('nnok')
             newEvent.save()
@@ -51,7 +61,10 @@ def newEvent(request):
 def listEvents(request):
     tabs = OperatorTabViews()
     tabs.set_active_tab('list')
-    return renderTabView(request, tabs, {})
+    return renderTabView(request, tabs, {
+        'trafficevents': TrafficEvent.objects.all(),
+        'terroristevents': TerroristEvent.objects.all()
+    })
 
 
 def mapEvents(request):
@@ -72,12 +85,19 @@ def getEvents(request):
     events_list.extend(TrafficEvent.objects.all())
     events_list.extend(TerroristEvent.objects.all())
     events_list = [{
-        'type': types,
+        'type': getEventType(e),
         'details': e
     }
-        for e in sorted(events_list, key=lambda x: x.date_recorded, reverse=True)
+        for e in sorted(events_list, key=lambda x: x.event.date_recorded, reverse=True)
     ]
     return events_list
+
+
+def getEventTypeIcon(eventtype):
+    if eventtype == 'traffic':
+        return '/static/img/caraccident.png'
+    elif eventtype == 'terrorist':
+        return '/static/img/terrorist.png'
 
 
 def getEventsGeoJSON(request):
@@ -88,11 +108,11 @@ def getEventsGeoJSON(request):
         'type': 'Feature',
         'geometry': {
                 'type': 'Point',
-                'coordinates': [event['details'].location.x, event['details'].location.y]
+                'coordinates': [event['details'].event.location.x, event['details'].event.location.y]
         },
         'properties': {
             'type': event['type'],
-            'icon': None
+            'icon': getEventTypeIcon(event['type'])
         }
     } for event in events]
     data['geojson'] = geojson

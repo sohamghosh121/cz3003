@@ -9,7 +9,6 @@ from django.contrib.gis.geos import Point
 
 import os
 from tabview import TabViews
-# from models import TrafficEvent, TerroristEvent, Operator
 
 
 def healthCheck(request):
