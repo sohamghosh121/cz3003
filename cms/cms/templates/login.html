@@ -1,50 +1,64 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-</head>
+  <head>
+    <title>Login - Crisis Management System</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+    <script src="{% static "js/backstretch.min.js" %}"></script>
+    <link href="{% static "css/login.css" %}" rel="stylesheet">
+  </head>
 
-<style>
-.logo {
-	width: 300px;
-	margin: auto;
-	margin-top: 40px;
-	display: block;
-}
+  <body>
 
-.info-side {
-	text-align: center;
-	border-right: 1px solid #979797;
-	height: 100vh;
-}
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand"><img src="{% static "css/logo.png" %}"></a>
+        </div>
+      </div>
+    </div>
 
-input {
-	margin-top: 15px;
-	margin-bottom: 15px;
-}
-</style>
-{% block content %}
-<div class="container row">
-	<div class="col-md-9 info-side">
-		<img src="{% static 'img/crisis.jpg' %}" class="logo"/>
-		<h1> Crisis Management System Login </h1>
-	</div>
-	<div class="col-md-3">
-		<form class="form-signin" action="/login_view/" method="post">
-			{% csrf_token %}
-			<h2 class="form-signin-heading">Please sign in</h2>
-			<input name="username" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
-			<input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
-			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-		</form>
-	</div>
+    <div class="container">
 
+        <div id="login-wraper">
+            <form class="form login-form" action="/login_view/" method="post">
+                {% csrf_token %}
+                <legend>Sign in to <span class="blue">CMS</span></legend>
+                <div class="body">
+                  <div>
+                    <label>Username</label>
+                    <input type="text" id="username" name="username">
+                  </div>
+                  <div>
+                    <label>Password</label>
+                    <input type="password" id="password" name="password" style="margin-left:5px">
+                  </div>
+                </div>
+            
+                <div class="footer">
+                    <label class="checkbox inline">
+                        <input type="checkbox" id="inlineCheckbox1" value="option1"> Remember me
+                    </label>
+                    <button type="submit" class="btn btn-success" id="login">Login</button>
+                </div>
+            
+            </form>
+        </div>
 
-</div>
+    </div>
 
-
-{% endblock %}
+    <footer class="white navbar-fixed-bottom">
+      2016 Jialat CZ3003 CMS System. All rights reserved.     
+    </footer>
+  </body>
+</html>
