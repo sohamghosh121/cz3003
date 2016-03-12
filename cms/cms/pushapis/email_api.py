@@ -22,9 +22,9 @@ class EmailAPI:
         message.add_attachment('out.pdf','out.pdf')
         self.client.send(message)
 
-# if __name__ == '__main__':
-email = EmailAPI()
-email.pushUpdate("Test pdf","Hello World!")
+if __name__ == '__main__':
+    email = EmailAPI()
+    email.pushUpdate("Test pdf","Hello World!")
 
     
 
