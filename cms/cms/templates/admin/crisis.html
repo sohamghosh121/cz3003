@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+
+<style>
+
+#content {
+	padding: 0px;
+}
+#map {
+	width: 100%;
+	height: calc(100vh);
+}
+
+#filters-div {
+    height: 60px;
+    padding: 10px 15px;
+}
+
+.marker-content {
+    width: 150px;
+}
+
+.filter-option {
+    display:inline-block;
+    margin-right: 20px;
+    padding: 10px;
+    border:1px solid #c7c7c7;
+    border-radius: 4px;
+}
+</style>
+
+<div id="map">
+</div>
+
+
+<script>
+	var marker;
+
+    function generateInfoWindowHtml(event){
+        var html = '<div class="marker-content"><p>' +
+            '<strong> Reported by: </strong> ' + event['name'] + '<br/>' +
+            '<strong> Description: </strong>' + event['description'] + '<br/>' +
+            '<strong> Operator: </strong>' + event['operator'] + '<br/>' +
+            '</p></div>';
+        return html;
+    }
+
+	function initMap() {
+        var mapDiv = document.getElementById('map');
+        var infowindow =  new google.maps.InfoWindow();
+        var weatherGeoJSON, eventsGeoJSON, dengueGeoJSON;
+
+        var map = new google.maps.Map(mapDiv, {
+          center: {lat: 1.364922150947930, lng: 103.80912780761719},
+          zoom: 11
+        });
+        
+        $.ajax({
+                url: '/admin/getDistricts',
+                dataType: 'json'
+            }).done(function (data) {
+                 map.data.addGeoJson(data);
+            });  
+
+
+        var crisisSetterForm
+
+        map.data.addListener('click', function(event) {
+            var feature = event.feature
+            var iconbase = '/static/img/';
+            var type = feature.getProperty('type');
+
+            if (type == 'district') {
+                infowindow.setContent("<div style='width:170px; text-align:center; padding: 5px;'><b>"+feature.getProperty('name_1') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+'crisis.png'+"' height= 30px width = 30px/>  Crisis: <span style='font-size: 60px'>"+ feature.getProperty('crisis') +"</span><hr/><div class='setter' ><select style = 'width:100%; background-color:rgba(210, 77, 87, 0.2); padding :2px; margin-bottom:3px;'id ='"+ feature.getProperty('name_1') + "Select'> <option value='0'>0</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option> <option value='4'>4</option><option value='5'>5</option></select><button style='background-color:#e74c3c; width:100%; color:white; class='crisisButton' id ='CrisisButton' value='"+feature.getProperty('name_1') +"'>Change</button></div></div>");
+
+                infowindow.setPosition(new google.maps.LatLng(feature.getProperty('center')[0],feature.getProperty('center')[1]));
+                infowindow.open(map);
+            }
+        });  
+
+        map.data.setStyle(function(feature) {
+            var iconbase = '/static/img/';
+            var type = feature.getProperty('type');
+            if (type == 'district') {
+                if (feature.getProperty('case_size') <10) {
+                    return {
+                        fillColor: "rgb(241, 196, 15)",
+                        strokeColor: "rgb(243, 156, 18)",
+                        strokeWeight: 2
+                    }
+                }
+                if (feature.getProperty('case_size') < 20) {
+                    return {
+                        fillColor: "rgb(230, 126, 34)",
+                        strokeColor: "rgb(230, 126, 34)",
+                        strokeWeight: 2
+                    }
+                }
+                else {
+                    return {
+                        fillColor: "rgb(192, 57, 43)",
+                        strokeColor: "rgb(192, 57, 43)",
+                        strokeWeight: 2
+                    }
+                }
+            } 
+        });
+       
+        }
+        $( "#map" ).delegate('#CrisisButton','click', function() {
+            var district = $( "#CrisisButton" ).val();
+            var selectbuttonname = "#"+district+"Select"
+            var newvalue = $(selectbuttonname).val();
+            var textToDisplay = "Confirm Set Crisis Level of "+ district + " to " + newvalue "?"
+            var r = confirm(textToDisplay);
+            if (r == true){
+                $.ajax({
+                    url: '/admin/setCrisis',
+                    dataType: 'json'
+                }).done(function (data) {
+                     map.data.addGeoJson(data);
+                });  
+            } 
+        });
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+        async defer></script>
+
+
+{% endblock content %}

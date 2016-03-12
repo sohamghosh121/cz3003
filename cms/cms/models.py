@@ -105,7 +105,6 @@ class EventTransactionLog(models.Model):
         max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
     operator = models.ForeignKey(Operator, blank=True, null=True)
 
-
 class Singapore(models.Model):
     gid = models.AutoField(primary_key=True)
     id_0 = models.DecimalField(
@@ -124,7 +123,18 @@ class Singapore(models.Model):
     nl_name_1 = models.CharField(max_length=50, blank=True, null=True)
     varname_1 = models.CharField(max_length=150, blank=True, null=True)
     geom = gismodels.GeometryField(blank=True, null=True)
-
     class Meta:
         managed = False
         db_table = 'cms_singapore'
+
+class Districts(models.Model):
+    district = models.CharField(max_length=10, primary_key= True)
+    crisis = models.PositiveSmallIntegerField(default = 0)
+    center = gismodels.PointField(blank=True, null=True)
+
+class CrisisTransactionLog(models.Model):
+    old_crisis = models.PositiveSmallIntegerField()
+    new_crisis = models.PositiveSmallIntegerField()
+    admin = models.ForeignKey(Admin, blank=True, null=True)
+    date_recorded = models.DateTimeField(auto_now=True)
+
