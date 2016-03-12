@@ -9,6 +9,7 @@ from django.contrib.gis.geos import Point
 from models import Operator, Admin
 
 from pullapis.weather import WeatherAPI
+from pullapis.dengue import DengueAPI
 
 import os
 from tabview import TabViews
@@ -78,5 +79,8 @@ def map_view(request):
 def list_event_view(request):
     return None
 
-def pullWeatherInfo(request):
+def getWeatherInfo(request):
     return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
+
+def getDengueInfo(request):
+    return JsonResponse(DengueAPI().returnGeoJson(), safe=False)

@@ -77,8 +77,9 @@ class WeatherAPI:
 		"""
 			returns GeoJson Data to be added into map
 		"""
+		WeatherAPI().pullUpdate()
 		weather = Weather.objects.all()
-		geojson = {'type': 'FeatureCollection', 'features': []}
+		geojson = {'type': 'FeatureCollection', 'features': [], }
 		for w in weather :
 			longform, icon = self.getNowcastDetails(w.condition)
 			geojson['features'].append({
