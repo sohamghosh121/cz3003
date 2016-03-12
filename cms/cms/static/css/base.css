@@ -40,7 +40,13 @@ body {
     padding-left: 0px;
     padding-right: 0px;
     width: calc(100% - 225px);
+    padding: 30px;
     height: 100%;
+}
+
+#header {
+	height: 70px;
+	line-height: 70px;
 }
 
 .sidebar {

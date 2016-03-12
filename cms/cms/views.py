@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect
 
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.geos import Point
 
 import os
 from tabview import TabViews
+# from models import TrafficEvent, TerroristEvent, Operator
 
 
 def healthCheck(request):
@@ -16,24 +18,13 @@ def healthCheck(request):
 
 def renderTabView(request, tabs, data={}):
     active_tab = tabs.get_active_tab()
-    partner = Partner.objects.get(id=1)
     if active_tab:
         return render(request, active_tab.template,
                       {'title': active_tab.title,
                        'data': data,
-                       'tabs': tabs.tabs,
-                       'partner_name': partner.name})
+                       'tabs': tabs.tabs})
     else:
         return HttpResponse('ERROR')
-
-
-def newEvent(request):
-    if request.method == 'GET':
-        tabs = TabViews()
-        tabs.set_active_tab('map')
-        return renderTabView(request, tabs)
-    elif request.method == 'POST':
-        return HttpResponse('ok')
 
 
 def loginView(request):

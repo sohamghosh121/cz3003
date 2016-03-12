@@ -14,24 +14,11 @@ class MapView(TabView):
     title = 'Map'
 
 
-class OperatorMapView(MapView):
-    template = 'operatormapview.html'
-
-
-class PublicMapView(MapView):
-    template = 'publicmapview.html'
-
-
-class AdminMapView(MapView):
-    template = 'adminmapview.html'
-
-
-class NewEventView(TabView):
-    tab_id = 'newevent'
-    icon = 'plus-square'
-    url = 'new'
-    title = 'New Request'
-    template = 'newevent.html'
+class ListView(TabView):
+    tab_id = 'list'
+    icon = 'list'
+    url = 'list'
+    title = 'List'
 
 
 class TabViews:
@@ -51,9 +38,3 @@ class TabViews:
         for tab in self.tabs:
             if tab.is_active:
                 return tab
-
-
-class OperatorTabViews:
-
-    def __init__(self):
-        self.tabs = []

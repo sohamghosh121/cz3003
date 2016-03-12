@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+
+<style>
+
+#content {
+	padding: 0px;
+}
+#map {
+	width: 100%;
+	height: calc(100vh - 70px);
+}
+</style>
+
+<div id="map">
+</div>
+
+
+<script>
+	var marker;
+
+	function initMap() {
+        var mapDiv = document.getElementById('map');
+        $.ajax({
+    		url: 'getEventsGeoJSON',
+    		data: {},
+    		dataType: 'json'
+    	}).done(function(data, textStatus, jqXHR) {
+    		map.data.addGeoJson(data['geojson']);
+            map.data.setStyle(function(feature){
+                var icon = feature.getProperty('icon');
+                return {
+                    'icon': icon
+                };
+            });
+            $.each(data['legend'], function(i, d){
+                $('#legend-items').append('<span class="legend-item"><img src="' + d[1] + '"/> ' + d[0] + '</span>');
+            });
+    	}).fail(function(){
+    		console.log('failed'); // some proper failure message
+    	});
+        var map = new google.maps.Map(mapDiv, {
+          center: {lat: 1.364922150947930, lng: 103.80912780761719},
+          zoom: 11
+        });
+    }
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+        async defer></script>
+
+
+{% endblock content %}

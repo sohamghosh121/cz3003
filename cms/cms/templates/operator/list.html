@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+<style>
+.events-table {
+	width: 95%;
+	text-align: center;
+	margin-left:2.5%;
+	border: 1px solid #343434;
+}
+.events-table thead th{
+	text-align: center;
+	height: 42px; /* its the answer to everything */
+	color: white;
+	background: #343434;
+
+}
+
+.events-table tbody tr {
+	height: 33px;
+}
+
+.events-container {
+	margin-top: 25px;
+}
+</style>
+
+<div class="row events-container traffic-events">
+	Traffic events:
+	<table class="events-table">
+		<thead>
+			<tr>
+				<th> Name </th> <th> Contact Number </th> <th> Description </th> <th> Details </th> <th> </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for event in trafficevents %}
+				<tr>
+					<td> {{ event.name }} </td> <td> {{event.contact_number}} </td> <td> {{event.description}} </td> <td> </td> <td> edit stuffsssss </td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+
+<div class="row events-container terrorist-events">
+	Terrorist events:
+	<table class="events-table">
+		<thead>
+			<tr>
+				<th> <!-- icon --> </th> 
+				<th> Name </th> 
+				<th> Contact Number </th> 
+				<th> Description </th> 
+				<th> Details </th> 
+				<th> </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for event in trafficevents %}
+				<tr>
+					<td> {{ event.name }} </td> 
+					<td> {{event.contact_number}} </td> 
+					<td> {{event.description}} </td> 
+					<td> </td> 
+					<td>  </td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}
