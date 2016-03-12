@@ -4,9 +4,10 @@ from django.contrib.auth.models import User
 
 
 class Weather(gismodels.Model):
-	districtname = models.CharField(max_length=128, primary_key=True)
-	location = gismodels.PointField()
-	condition = models.CharField(max_length=2, blank=True)
+    districtname = models.CharField(max_length=128, primary_key=True)
+    location = gismodels.PointField()
+    condition = models.CharField(max_length=2, blank=True)
+
 
 class Dengue(models.Model):
     gid = models.AutoField(primary_key=True)
@@ -15,9 +16,11 @@ class Dengue(models.Model):
     case_size = models.SmallIntegerField(blank=True, null=True)
     name = models.CharField(max_length=254, blank=True, null=True)
     hyperlink = models.CharField(max_length=254, blank=True, null=True)
-    shape_leng = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    shape_area = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    geom = models.GeometryField(blank=True, null=True)
+    shape_leng = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_area = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True)
+    geom = gismodels.GeometryField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -73,3 +76,27 @@ class TerroristEvent(Event):
     )
     num_hostiles = models.IntegerField(default=0)
     attack_type = models.CharField(max_length=3, choices=TYPE_CHOICES)
+
+
+class Singapore(models.Model):
+    gid = models.AutoField(primary_key=True)
+    id_0 = models.DecimalField(
+        max_digits=10, decimal_places=0, blank=True, null=True)
+    iso = models.CharField(max_length=3, blank=True, null=True)
+    name_0 = models.CharField(max_length=75, blank=True, null=True)
+    id_1 = models.DecimalField(
+        max_digits=10, decimal_places=0, blank=True, null=True)
+    name_1 = models.CharField(max_length=75, blank=True, null=True)
+    hasc_1 = models.CharField(max_length=15, blank=True, null=True)
+    ccn_1 = models.DecimalField(
+        max_digits=10, decimal_places=0, blank=True, null=True)
+    cca_1 = models.CharField(max_length=254, blank=True, null=True)
+    type_1 = models.CharField(max_length=50, blank=True, null=True)
+    engtype_1 = models.CharField(max_length=50, blank=True, null=True)
+    nl_name_1 = models.CharField(max_length=50, blank=True, null=True)
+    varname_1 = models.CharField(max_length=150, blank=True, null=True)
+    geom = gismodels.GeometryField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cms_singapore'

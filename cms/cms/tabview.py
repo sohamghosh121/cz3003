@@ -31,7 +31,22 @@ class NewEventView(TabView):
     icon = 'plus-square'
     url = 'new'
     title = 'New Request'
-    template = 'newevent.html'
+    template = 'new_event.html'
+
+
+class ListView(TabView):
+    tab_id = 'listevents'
+    icon = 'list'
+    url = 'listEvents'
+    title = 'List'
+
+
+class OperatorListEvents(ListView):
+    template = 'operator_list_events.html'
+
+
+class AdminListTransactions(ListView):
+    template = 'admin_list_transactions.html'
 
 
 class TabViews:
@@ -56,4 +71,4 @@ class TabViews:
 class OperatorTabViews(TabViews):
 
     def __init__(self):
-        self.tabs = [NewEventView(), MapView()]
+        self.tabs = [NewEventView(), MapView(), OperatorListEvents()]

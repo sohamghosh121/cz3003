@@ -9,7 +9,7 @@ from django.contrib.gis.geos import Point
 
 import os
 from tabview import TabViews, OperatorTabViews
-from models import TrafficEvent, TerroristEvent, Operator
+# from models import TrafficEvent, TerroristEvent, Operator
 
 
 def healthCheck(request):
@@ -32,7 +32,7 @@ def latLngToPoint(stringobj):
     return Point(float(lng), float(lat))
 
 
-@login_required
+# @login_required
 def newEvent(request):
     if request.method == 'GET':
         tabs = OperatorTabViews()
@@ -64,6 +64,15 @@ def newEvent(request):
             newEvent.save()
             return HttpResponse('ok')
         return HttpResponseBadRequest('nok')
+
+
+def newEvent(request):
+    if request.method == 'GET':
+        tabs = OperatorTabViews()
+        tabs.set_active_tab('listevents')
+        data = {
+        }
+        return renderTabView(request, tabs, data)
 
 
 def loginView(request):
