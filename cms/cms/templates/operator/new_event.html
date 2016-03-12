@@ -53,6 +53,7 @@
 .event-forms input[type="radio"] {
 	display: inline;
 	margin-left: 8px;
+    width: auto;
 }
 
 #map {
@@ -78,13 +79,15 @@
 	<div class="col-md-6">
 		<form action="new" method="post">
 		{% csrf_token %}
-			<input type="text" placeholder="Name of person" name="name" required />
-			<input type="tel" placeholder="Contact Number" name="contact" required />
+			<input type="tel" placeholder="Identification" name="identification"  />
+			<input type="text" placeholder="Name of person" name="name"  />
+			<input type="tel" placeholder="Contact Number" name="contact"  />
+
 			<textarea placeholder="Description" name="description" rows="3" ></textarea>
 			Casulaties:
-			<input type="number" placeholder="Casualties" name="numCasualties" value="0"/>
+			<input type="number" min="0" placeholder="Casualties" name="numCasualties" value="0"/>
 			Injured:
-			<input type="number" placeholder="Injured" name="numInjured" value="0"/>
+			<input type="number" min="0" placeholder="Injured" name="numInjured" value="0"/>
 			<div class="special-fields">
 				<div class="terrorist-fields special-field">
 					Number of hostiles:
@@ -97,7 +100,7 @@
 				</div>
 				<div class="traffic-fields special-field">
 				Number of vehicles:
-				<input type="number" value="0" name="numVehicles" />
+				<input type="number" min="0" value="0" name="numVehicles" />
 				</div>
 			</div>
 			Location: (choose from map) <input id="location" type="text" placeholder="Location" name="location" required />

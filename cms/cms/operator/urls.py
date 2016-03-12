@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^new', views.newEvent),
     url(r'^list', views.listEvents),
     url(r'^map', views.mapEvents),
-    url(r'^getEventsGeoJSON', views.getEventsGeoJSON)
+    url(r'^updateEvent', views.updateEvent),
+    url(r'^getEventsGeoJSON', views.getEventsGeoJSON),
+    url(r'^getEventUpdateForm', views.getEventUpdateForm),
 ]

@@ -44,6 +44,43 @@
 	  white-space: nowrap;
 	  overflow: hidden;
 	  text-overflow: ellipsis;
+	  margin: 0px;
+}
+
+.inactive-row {
+	color: #999;
+}
+
+.edit-controls {
+	cursor: pointer;
+}
+
+.edit-controls:hover {
+	color: #979797;
+}
+
+.modal-backdrop {
+	display: none;
+}
+
+.modal-dialog {
+	top:100px;
+}
+
+#form-modal input {
+	margin-top:6px;
+}
+
+.event-forms input, .event-forms textarea {
+	display: block;
+	width: 100%;
+	margin-bottom: 15px;
+}
+
+.event-forms input[type="radio"] {
+	display: inline;
+	margin-left: 8px;
+    width: auto;
 }
 </style>
 
@@ -61,16 +98,26 @@
 		</thead>
 		<tbody>
 			{% for event in data.trafficevents %}
-				<tr>
-					<td> {{ event.event.name }} </td> 
-					<td> {{ event.event.contact_number}} </td> 
+				<tr class="{% if not event.event.isactive %}inactive-row{% endif %}">>
+					<td> 
+						{{ event.event.first_responder.name }} (*) 
+							{% for person in event.event.reporters.all %}
+								<br> {{person.name}}
+							{% endfor %}
+					</td> 
+					<td> 
+							{{ event.event.first_responder.contact_number }}
+							{% for person in event.event.reporters.all %}
+								<br> {{person.contact_number}}
+							{% endfor %}
+					</td> 
 					<td> <p class="truncate">  {{ event.event.description}} </p> </td> 
 					<td> 
 						<img src="{% static 'img/dead.png' %}" class="details-img"/>{{ event.event.num_casualties}} 
 						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}
 						<img src="{% static 'img/caraccident.png' %}" class="details-img"/>{{event.num_vehicles}}
 					</td> 
-					<td> edit stuffsssss </td>
+					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <i class="fa fa-toggle-{% if event.event.isactive %}on{% else %}off{% endif %} edit-controls"></i> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -92,8 +139,13 @@
 		</thead>
 		<tbody>
 			{% for event in data.terroristevents %}
-				<tr>
-					<td> {{ event.event.name }} </td> 
+				<tr class="{% if not event.event.isactive %}inactive-row{% endif %}">
+					<td> {{ event.event.first_responder.name }} (*) 
+							{% for person in event.event.reporters %}
+								<br> {{person.name}}
+							{% endfor %}
+
+					</td> 
 					<td> {{ event.event.contact_number}} </td> 
 					<td> <p class="truncate"> {{ event.event.description}} </p> </td> 
 					<td> 
@@ -101,10 +153,52 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/> {{event.event.num_injured}}
 						<img src="{% static 'img/terrorist.png' %}" class="details-img"/> {{event.num_hostiles}}
 					</td> 
-					<td> edit stuffsssss </td>
+					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <i class="fa fa-toggle-{% if event.event.isactive %}on{% else %}off{% endif %} edit-controls"></i>  </td>
 				</tr>
 			{% endfor %}
 		</tbody>
 	</table>
 </div>
+
+<div id="form-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="update-event-form" method="POST" action="updateEvent">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Update Event</h4>
+			</div>
+			
+				{% csrf_token %}
+				<div class="modal-body event-forms">
+
+				</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Done</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+function populateForm(event){
+
+}
+
+function editEvent(eventid, eventtype){
+	$.ajax({
+    		url: 'getEventUpdateForm',
+    		data: {'eventid': eventid, 'eventtype': eventtype},
+    		dataType: 'html'
+    	}).done(function(data, textStatus, jqXHR) {
+    		$('.modal-body').html(data);
+            $('#form-modal').modal();
+    	}).fail(function(){
+    		console.log('failed'); // some proper failure message
+    	});
+}
+
+</script>
 {% endblock content %}

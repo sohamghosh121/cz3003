@@ -48,7 +48,7 @@ class WeatherAPI(PullAPI):
             'DR': ('Drizzle', 'lightrain.png'),
             'FA': ('Fair (Day)', 'sunny.png'),
             'FG': ('Fog', 'haze.png'),
-            'FN': ('Fair (Night)', 'clearnight'),
+            'FN': ('Fair (Night)', 'clearnight.png'),
             'FW': ('Fair & Warm', 'hot.png'),
             'HG': ('Heavy Thundery Showers with Gusty Winds', 'thunderstorm.png'),
             'HR': ('Heavy Rain', 'rain.png'),
@@ -82,6 +82,7 @@ class WeatherAPI(PullAPI):
         """
                 returns GeoJson Data to be added into map
         """
+        self.pullUpdate()
         weather = Weather.objects.all()
         geojson = {'type': 'FeatureCollection', 'features': []}
         for w in weather:

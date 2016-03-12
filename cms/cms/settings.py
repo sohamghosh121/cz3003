@@ -138,7 +138,10 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-#DJANGO SERIALIZER
+# DJANGO SERIALIZER
 SERIALIZATION_MODULES = {
-    "geojson": "django.contrib.gis.serializers.geojson", 
- }
+    "geojson": "django.contrib.gis.serializers.geojson",
+}
+
+
+LOGIN_URL = '/login'

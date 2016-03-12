@@ -14,20 +14,22 @@ from pullapis.dengue import DengueAPI
 import os
 from tabview import TabViews
 
-operatorList = Operator.objects.all()
-adminList = Admin.objects.all()
 
-def isOperator(operatorList, username):
-    for operator in operatorList:
-        if operator.username == username:
-            return True
-    return False
+def isUserType(user, usercls):
+    try:
+        u = usercls.objects.get(user_ptr=user.id)
+        return True
+    except:
+        return False
 
-def isAdmin(adminList, username):
-    for admin in adminList:
-        if admin.username == username:
-            return True
-    return False
+
+def isOperator(user):
+    return isUserType(user, Operator)
+
+
+def isAdmin(user):
+    return isUserType(user, Admin)
+
 
 def healthCheck(request):
     return HttpResponse('It\'s all good!')
@@ -43,12 +45,14 @@ def renderTabView(request, tabs, data={}):
     else:
         return HttpResponse('ERROR')
 
-def registerOperator(request,username,email,password):
-    if not isOperator(operatorList,username):
+
+def registerOperator(request, username, email, password):
+    if not isOperator(Operator.objects.all(), username):
         newOperator = Operator.objects.create_user(username, email, password)
         newOperator.save()
         return HttpResponse("Operator created!")
     return HttpResponse("Operator existed!")
+
 
 def loginView(request):
     username = request.POST['username']
@@ -57,10 +61,10 @@ def loginView(request):
     if user is not None:
         if user.is_active:
             dologin(request, user)
-            if isOperator(operatorList, username): #login as an operator
-                return redirect('https://www.google.com.sg/')
-            elif isAdmin(adminList, username): #login as an admin
-                return redirect('https://www.facebook.com/')
+            if isOperator(user):  # login as an operator
+                return redirect('/operator/map')
+            elif isAdmin(user):  # login as an admin
+                return redirect('/admin/map')
         else:
             # Return a 'disabled account' error message
             return HttpResponse("Disabled account")
@@ -71,7 +75,7 @@ def loginView(request):
 
 def logoutView(request):
     logout(request)
-    return redirect('google.com.sg')
+    return redirect('/login')
 
 
 def submit_event(request):
@@ -85,8 +89,10 @@ def map_view(request):
 def list_event_view(request):
     return None
 
+
 def getWeatherInfo(request):
     return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
+
 
 def getDengueInfo(request):
     return JsonResponse(DengueAPI().returnGeoJson(), safe=False)
