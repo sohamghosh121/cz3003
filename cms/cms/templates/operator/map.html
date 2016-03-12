@@ -10,9 +10,32 @@
 }
 #map {
 	width: 100%;
-	height: calc(100vh - 70px);
+	height: calc(100vh - 130px);
+}
+
+#filters-div {
+    height: 60px;
+    padding: 10px 15px;
+}
+
+.marker-content {
+    width: 150px;
+}
+
+.filter-option {
+    display:inline-block;
+    margin-right: 20px;
+    padding: 10px;
+    border:1px solid #c7c7c7;
+    border-radius: 4px;
 }
 </style>
+<div id="filters-div">
+    <span class="filter-option"> Show Weather <input type="checkbox" name="filter" value="weather" checked /> </span>
+    <span class="filter-option"> Show Dengue <input type="checkbox" name="filter" value="dengue" checked /> </span>
+    <span class="filter-option"> Show Traffic Events <input type="checkbox" name="filter" value="traffic" checked /> </span>
+    <span class="filter-option"> Show Terrorist Events <input type="checkbox" name="filter" value="terrorist" checked /> </span>
+</div>
 
 <div id="map">
 </div>
@@ -21,67 +44,112 @@
 <script>
 	var marker;
 
+    function generateInfoWindowHtml(event){
+        var html = '<div class="marker-content"><p>' +
+            '<strong> Reported by: </strong> ' + event['name'] + '<br/>' +
+            '<strong> Description: </strong>' + event['description'] + '<br/>' +
+            '<strong> Operator: </strong>' + event['operator'] + '<br/>' +
+            '</p></div>';
+        return html;
+    }
+
 	function initMap() {
         var mapDiv = document.getElementById('map');
+        var weatherGeoJSON, eventsGeoJSON;
+
+        var map = new google.maps.Map(mapDiv, {
+          center: {lat: 1.364922150947930, lng: 103.80912780761719},
+          zoom: 11
+        });
+
+        var infowindow = new google.maps.InfoWindow();
+
         $.ajax({
     		url: 'getEventsGeoJSON',
     		data: {},
     		dataType: 'json'
     	}).done(function(data, textStatus, jqXHR) {
     		map.data.addGeoJson(data['geojson']);
-            map.data.setStyle(function(feature){
-                var icon = feature.getProperty('icon');
-                return {
-                    'icon': {
-                        url:icon,
-                        scaledSize: {
-                            'width': 30,
-                            'height': 30
-                        }
-                    }
-                };
+            eventsGeoJSON = data['geojson'];
+            map.data.addListener('click', function(e){
+                var feature = e.feature;
+                var type = feature.getProperty('type');
+                if (type == 'traffic' || type == 'terrorist'){
+                    var html = generateInfoWindowHtml(feature.getProperty('event'));
+                    infowindow.setContent(html);
+                    infowindow.setPosition(feature.getGeometry().get());
+                    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-30)});
+                    infowindow.open(map);
+                } 
             });
     	}).fail(function(){
     		console.log('failed'); // some proper failure message
     	});
-        var map = new google.maps.Map(mapDiv, {
-          center: {lat: 1.364922150947930, lng: 103.80912780761719},
-          zoom: 11
-        });
         
         $.ajax({
                 url: '/getWeatherInfo',
                 dataType: 'json'
             }).done(function (data) {
+                 weatherGeoJSON = data;
                  map.data.addGeoJson(data);
-                 var infowindow = new google.maps.InfoWindow()
                  map.data.addListener('click', function(event) {
-                    var feature = event.feature
-                    var iconbase = '/static/img/';
-                    infowindow.setContent("<div style='width:170px; text-align:center;'><b>"+feature.getProperty('name') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+feature.getProperty('icon')+"' height= 30px width = 30px/>  "+ feature.getProperty('condition_long')+"</div>");
-                    infowindow.setPosition(feature.getGeometry().get());
-                    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-30)});
-                    infowindow.open(map);
-                });  
-            })
+                    var feature = event.feature;
+                    var type = feature.getProperty('type');
+                    if (type == 'weather') {
+                        var iconbase = '/static/img/';
+                        infowindow.setContent("<div style='width:170px; text-align:center;'><b>"+feature.getProperty('name') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+feature.getProperty('icon')+"' height= 30px width = 30px/>  "+ feature.getProperty('condition_long')+"</div>");
+                        infowindow.setPosition(feature.getGeometry().get());
+                        infowindow.setOptions({pixelOffset: new google.maps.Size(0,-30)});
 
-        map.data.setStyle(function(feature) {
-            var iconbase = '/static/img/';
-            var type = feature.getProperty('type');
-            if (type == 'weather') {
-              return {
-                icon: {
-                    url:iconbase + feature.getProperty('icon'),
-                    scaledSize: {
-                        width: 40,
-                        height:40
+                        infowindow.open(map);
                     }
-                },
-                title: feature.getProperty('name') + ":" + feature.getProperty('condition_long')
-              };
-            }
-        })
+                });  
+
+                map.data.setStyle(function(feature) {
+                    var iconbase = '/static/img/';
+                    var type = feature.getProperty('type');
+                    if (type == 'weather') {
+                      return {
+                        icon: {
+                            url:iconbase + feature.getProperty('icon'),
+                            scaledSize: {
+                                width: 40,
+                                height:40
+                            }
+                        },
+                        title: feature.getProperty('name') + ":" + feature.getProperty('condition_long')
+                      };
+                    } else if (type == 'traffic' || type == 'terrorist'){
+                        return {
+                            'icon': {
+                                url: iconbase + feature.getProperty('icon'),
+                                scaledSize: {
+                                    'width': 30,
+                                    'height': 30
+                                }
+                            }
+                        };
+                    }
+                });
+
+                $('.filter-option input[type="checkbox"]').change(function(){
+                    filters = [];
+                    map.data.addGeoJson(weatherGeoJSON);
+                    map.data.addGeoJson(eventsGeoJSON);
+                    $('input[name="filter"]:checked').each(function(idx, elem){
+                        filters.push($(elem).val());
+                    });
+                    map.data.forEach(function(feature) {
+                        if (filters.indexOf(feature.getProperty('type')) == -1) {
+                            map.data.remove(feature);
+                        }
+                    });
+                });
+        });
     }
+
+
+    
         
     
 
