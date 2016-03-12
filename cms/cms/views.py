@@ -13,6 +13,20 @@ from pullapis.weather import WeatherAPI
 import os
 from tabview import TabViews
 
+operatorList = Operator.objects.all()
+adminList = Admin.objects.all()
+
+def isOperator(operatorList, username):
+    for operator in operatorList:
+        if operator.username == username:
+            return True
+    return False
+
+def isAdmin(adminList, username):
+    for admin in adminList:
+        if admin.username == username:
+            return True
+    return False
 
 def healthCheck(request):
     return HttpResponse('It\'s all good!')
@@ -28,17 +42,12 @@ def renderTabView(request, tabs, data={}):
     else:
         return HttpResponse('ERROR')
 
-def isOperator(operatorList, username):
-    for operator in operatorList:
-        if operator.username == username:
-            return True
-    return False
-
-def isAdmin(adminList, username):
-    for admin in adminList:
-        if admin.username == username:
-            return True
-    return False
+def registerOperator(request,username,email,password):
+    if not isOperator(operatorList,username):
+        newOperator = Operator.objects.create_user(username, email, password)
+        newOperator.save()
+        return HttpResponse("Operator created!")
+    return HttpResponse("Operator existed!")
 
 def loginView(request):
     username = request.POST['username']
@@ -47,8 +56,6 @@ def loginView(request):
     if user is not None:
         if user.is_active:
             dologin(request, user)
-            operatorList = Operator.objects.all()
-            adminList = Admin.objects.all()
             if isOperator(operatorList, username): #login as an operator
                 return redirect('https://www.google.com.sg/')
             elif isAdmin(adminList, username): #login as an admin
