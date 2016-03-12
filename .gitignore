@@ -20,6 +20,7 @@ lib64/
 parts/
 sdist/
 var/
+
 *.egg-info/
 .installed.cfg
 *.egg
@@ -60,3 +61,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+
+#ignore migrations
+migrations/*
+
