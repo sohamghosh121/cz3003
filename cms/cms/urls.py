@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^healthCheck/', views.healthCheck),
     url(r'^operator/', include('cms.operator.urls')),
     url(r'^admin/', include('cms.admin.urls')),
+    url(r'^getWeatherInfo', views.pullWeatherInfo)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
