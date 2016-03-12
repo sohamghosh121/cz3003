@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^login_view', views.loginView),
     url(r'^login/', TemplateView.as_view(template_name='login.html')),
     url(r'^report/', TemplateView.as_view(template_name='report.html')),
-    url(r'^getWeatherInfo', views.pullWeatherInfo),
+    url(r'^getWeatherInfo', views.getWeatherInfo),
+    url(r'^getDengueInfo', views.getDengueInfo)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
