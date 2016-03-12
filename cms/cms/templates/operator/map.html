@@ -48,7 +48,42 @@
           center: {lat: 1.364922150947930, lng: 103.80912780761719},
           zoom: 11
         });
+        
+        $.ajax({
+                url: '/getWeatherInfo',
+                dataType: 'json'
+            }).done(function (data) {
+                 map.data.addGeoJson(data);
+                 var infowindow = new google.maps.InfoWindow()
+                 map.data.addListener('click', function(event) {
+                    var feature = event.feature
+                    var iconbase = '/static/img/';
+                    infowindow.setContent("<div style='width:170px; text-align:center;'><b>"+feature.getProperty('name') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+feature.getProperty('icon')+"' height= 30px width = 30px/>  "+ feature.getProperty('condition_long')+"</div>");
+                    infowindow.setPosition(feature.getGeometry().get());
+                    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-30)});
+                    infowindow.open(map);
+                });  
+            })
+
+        map.data.setStyle(function(feature) {
+            var iconbase = '/static/img/';
+            var type = feature.getProperty('type');
+            if (type == 'weather') {
+              return {
+                icon: {
+                    url:iconbase + feature.getProperty('icon'),
+                    scaledSize: {
+                        width: 40,
+                        height:40
+                    }
+                },
+                title: feature.getProperty('name') + ":" + feature.getProperty('condition_long')
+              };
+            }
+        })
     }
+        
+    
 
 </script>
 

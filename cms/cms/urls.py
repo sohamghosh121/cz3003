@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin as djangoadmin
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 import views
 import settings
 import operator.urls
@@ -26,4 +27,7 @@ urlpatterns = [
     url(r'^healthCheck/', views.healthCheck),
     url(r'^operator/', include('cms.operator.urls')),
     url(r'^admin/', include('cms.admin.urls')),
+    url(r'^login_view', views.loginView),
+    url(r'^login/', TemplateView.as_view(template_name='login.html'))
+    url(r'^getWeatherInfo', views.pullWeatherInfo)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -16,23 +16,45 @@ class Dengue(models.Model):
     case_size = models.SmallIntegerField(blank=True, null=True)
     name = models.CharField(max_length=254, blank=True, null=True)
     hyperlink = models.CharField(max_length=254, blank=True, null=True)
-    shape_leng = models.DecimalField(
-        max_digits=65535, decimal_places=65535, blank=True, null=True)
-    shape_area = models.DecimalField(
-        max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_leng = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_area = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     geom = gismodels.GeometryField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'cms_dengue'
 
+# # adding methods to Django User class
+# def isOperator(self):
+#     return 1
+
+# def isAdmin(self):
+#     return 2
+
+# User.add_to_class("isOperator", isOperator)
+# User.add_to_class("isAdmin", isAdmin)
 
 class Operator(User):
     name = models.CharField(max_length=256, default='')
 
+    # # @override
+    # def isOperator(self):
+    #     return True
+
+    # # @override
+    # def isAdmin(self):
+    #     return False
 
 class Admin(User):
     name = models.CharField(max_length=256, default='')
+
+    # # @override
+    # def isOperator():
+    #     return False
+
+    # # @override
+    # def isAdmin():
+    #     return True
 
 
 class Event(models.Model):

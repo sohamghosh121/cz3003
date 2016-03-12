@@ -30,11 +30,11 @@ input {
 {% block content %}
 <div class="container row">
 	<div class="col-md-9 info-side">
-		<img src="{% static 'img/logo2.png' %}" class="logo"/>
-		<h1> Dashboard </h1>
+		<img src="{% static 'img/crisis.jpg' %}" class="logo"/>
+		<h1> Crisis Management System Login </h1>
 	</div>
 	<div class="col-md-3">
-		<form class="form-signin" action="/login" method="post">
+		<form class="form-signin" action="/login_view/" method="post">
 			{% csrf_token %}
 			<h2 class="form-signin-heading">Please sign in</h2>
 			<input name="username" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">

@@ -117,3 +117,6 @@ def getEventsGeoJSON(request):
     } for event in events]
     data['geojson'] = geojson
     return JsonResponse(data, safe=False)
+
+def pull_weather(request):
+    return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
