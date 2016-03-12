@@ -79,15 +79,13 @@ class Event(models.Model):
     assistance_required = models.CharField(
         max_length=3, choices=ASSISTANCE_CHOICES)
 
-    class Meta:
-        abstract = True
 
-
-class TrafficEvent(Event):
+class TrafficEvent(models.Model):
+    event = models.ForeignKey(Event)
     num_vehicles = models.IntegerField(default=0)
 
 
-class TerroristEvent(Event):
+class TerroristEvent(models.Model):
     BOMB = 'BMB'
     BIOCHEMICAL = 'BCH'
     HOSTAGE = 'HST'
@@ -96,8 +94,16 @@ class TerroristEvent(Event):
         (BIOCHEMICAL, 'Biochemical'),
         (HOSTAGE, 'Hostage')
     )
+    event = models.ForeignKey(Event)
     num_hostiles = models.IntegerField(default=0)
     attack_type = models.CharField(max_length=3, choices=TYPE_CHOICES)
+
+
+class EventTransactionLog(models.Model):
+    event = models.ForeignKey(Event)
+    transaction_type = models.CharField(
+        max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
+    operator = models.ForeignKey(Operator, blank=True, null=True)
 
 
 class Singapore(models.Model):

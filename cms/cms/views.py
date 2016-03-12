@@ -12,7 +12,6 @@ from pullapis.weather import WeatherAPI
 
 import os
 from tabview import TabViews
-# from models import TrafficEvent, TerroristEvent, Operator
 
 
 def healthCheck(request):

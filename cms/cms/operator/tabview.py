@@ -9,7 +9,7 @@ class OperatorMapView(MapView):
 class NewEventView(TabView):
     tab_id = 'newevent'
     icon = 'plus-square'
-    url = 'new'
+    url = 'operator/new'
     title = 'New Request'
     template = 'operator/new_event.html'
 
