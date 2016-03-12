@@ -144,10 +144,10 @@ def listEvents(request):
     })
 
 
-@login_required
+# @login_required
 def mapEvents(request):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
+    # if not isOperator(request.user):
+    #     return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('map')
     return renderTabView(request, tabs, {})

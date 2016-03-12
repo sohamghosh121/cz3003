@@ -1,5 +1,7 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from cms.models import TrafficEvent, TerroristEvent
+from selenium import webdriver
+import time
 import requests
 
 def getTrafficInfo(request):
@@ -58,4 +60,14 @@ def getTerroristInfo(request):
 	response['locations'] = ['Orchard', 'Jurong']
 	response['attackTypes'] = ['Bomb', 'Biochemical']
 	return JsonResponse(response, safe=False)
+
+def getMapImage(request):
+	nothing = {}
+	browser = webdriver.Firefox()
+	browser.get('http://localhost:3000/operator/map')
+	time.sleep(2)
+	browser.save_screenshot('cms/static/img/map_screenshot.png')
+	browser.quit()
+	return JsonResponse(nothing, safe=False)
+
 
