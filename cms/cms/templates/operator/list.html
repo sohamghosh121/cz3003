@@ -64,7 +64,7 @@
 				<tr>
 					<td> {{ event.event.name }} </td> 
 					<td> {{ event.event.contact_number}} </td> 
-					<td> {{ event.event.description}} </td> 
+					<td> <p class="truncate">  {{ event.event.description}} </p> </td> 
 					<td> 
 						<img src="{% static 'img/dead.png' %}" class="details-img"/>{{ event.event.num_casualties}} 
 						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}

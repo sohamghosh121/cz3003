@@ -55,6 +55,7 @@
 
 	function initMap() {
         var mapDiv = document.getElementById('map');
+        var infowindow =  new google.maps.InfoWindow();
         var weatherGeoJSON, eventsGeoJSON, dengueGeoJSON;
 
         var map = new google.maps.Map(mapDiv, {
