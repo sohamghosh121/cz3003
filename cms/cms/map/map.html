@@ -26,8 +26,19 @@
 			    		data: weatherData,
 			    		dataType: 'json'
 			    	}).done(function (data) {
-			    		map.data.addGeoJson(data['geojson']);
+			    		 map.data.addGeoJson(data['geojson']);
+
 			   		})
+
+          map.data.setStyle(function(feature)) {
+            var iconbase = 'static/img/'
+            var type = feature.getProperty('type');
+            if (type == 'weather') {}
+              return {
+                icon: iconbase + feature.getProperty('icon')
+                title: feature.getProperty('name') + ":" + feature.getProperty('condition_long')
+              };
+            }
 	    }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"

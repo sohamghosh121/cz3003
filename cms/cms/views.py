@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
 from models import Operator, Admin
 
+from pullapis.weather import WeatherAPI
+
 import os
 from tabview import TabViews
 # from models import TrafficEvent, TerroristEvent, Operator
@@ -75,3 +77,6 @@ def map_view(request):
 
 def list_event_view(request):
     return None
+
+def pullWeatherInfo(request):
+    return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
