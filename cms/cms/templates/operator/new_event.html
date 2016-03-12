@@ -46,6 +46,7 @@
 
 .event-forms input, .event-forms textarea {
 	display: block;
+	width: 100%;
 	margin-bottom: 15px;
 }
 
@@ -114,6 +115,8 @@
 
 
 <script>
+	var marker;
+
 	$('.traffic-fields').show();
 
 	function changeEventType(type){
@@ -124,8 +127,16 @@
 		$('.' + type + '-fields').show();
 	}
 
-	function updateLocationChosen(location){
+	function updateLocationChosen(location, map){
 		$('#location').val(location['lat']+','+location['lng']);
+		if (marker){
+			marker.setMap(null);
+		}
+		marker = new google.maps.Marker({
+		    position: location,
+		    map: map,
+		    title: 'Event location'
+		  });
 	}
 
 
@@ -148,7 +159,7 @@
 	  //   }
 	    map.addListener('click', function(e){
 	    	var data = {'lat': e.latLng.lat(), 'lng': e.latLng.lng()};
-	    	updateLocationChosen(data);
+	    	updateLocationChosen(data, map);
 	    });
     }
 

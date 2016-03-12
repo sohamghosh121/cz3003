@@ -24,7 +24,6 @@ import admin.urls
 urlpatterns = [
     url(r'^djangoadmin/', include(djangoadmin.site.urls)),
     url(r'^healthCheck/', views.healthCheck),
-    url(r'^new', views.newEvent),
     url(r'^operator/', include('cms.operator.urls')),
     url(r'^admin/', include('cms.admin.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
