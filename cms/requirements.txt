@@ -15,4 +15,5 @@ sendgrid==2.2.1
 six==1.10.0
 smtpapi==0.3.1
 tweepy==3.5.0
+twilio==5.4.0
 wheel==0.24.0
