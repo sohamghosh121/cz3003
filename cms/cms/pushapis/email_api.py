@@ -10,7 +10,7 @@ class EmailAPI:
     client = sendgrid.SendGridClient(API_KEY)
 
     def generatePDF(self):
-        pdfkit.from_url('http://localhost:3000/report', 'out.pdf')
+        pdfkit.from_url('http://localhost:3000/report/report.html', 'out.pdf')
 
     def pushUpdate(self, subject, message):
         self.generatePDF()
@@ -22,9 +22,9 @@ class EmailAPI:
         message.add_attachment('out.pdf','out.pdf')
         self.client.send(message)
 
-if __name__ == '__main__':
-    email = EmailAPI()
-    email.pushUpdate("Test pdf","Hello World!")
+# if __name__ == '__main__':
+email = EmailAPI()
+email.pushUpdate("Test pdf","Hello World!")
 
     
 

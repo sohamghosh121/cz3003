@@ -58,5 +58,4 @@ def getTerroristInfo(request):
 	response['locations'] = ['Orchard', 'Jurong']
 	response['attackTypes'] = ['Bomb', 'Biochemical']
 	return JsonResponse(response, safe=False)
-# def exportHazeImage:
-# def exportDengueImage:
+
