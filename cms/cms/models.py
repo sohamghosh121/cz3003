@@ -17,7 +17,7 @@ class Dengue(models.Model):
     hyperlink = models.CharField(max_length=254, blank=True, null=True)
     shape_leng = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     shape_area = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    geom = models.GeometryField(blank=True, null=True)
+    geom = gismodels.GeometryField(blank=True, null=True)
 
     class Meta:
         managed = False
