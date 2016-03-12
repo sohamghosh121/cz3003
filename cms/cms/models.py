@@ -16,10 +16,8 @@ class Dengue(models.Model):
     case_size = models.SmallIntegerField(blank=True, null=True)
     name = models.CharField(max_length=254, blank=True, null=True)
     hyperlink = models.CharField(max_length=254, blank=True, null=True)
-    shape_leng = models.DecimalField(
-        max_digits=65535, decimal_places=65535, blank=True, null=True)
-    shape_area = models.DecimalField(
-        max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_leng = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    shape_area = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     geom = gismodels.GeometryField(blank=True, null=True)
 
     class Meta:

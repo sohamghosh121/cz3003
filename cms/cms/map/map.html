@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+      body {
+      	margin:0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+	    function initMap() {
+	        var mapDiv = document.getElementById('map');
+	        var map = new google.maps.Map(mapDiv, {
+	          center: {lat: 1.359856, lng: 103.8148173},
+	          zoom: 12 // must be whole number
+	        });
+	        // for all events: https://developers.google.com/maps/documentation/javascript/events#EventsOverview
+	        $.ajax({
+			    		url: 'weatherInfo',
+			    		data: weatherData,
+			    		dataType: 'json'
+			    	}).done(function (data) {
+			    		map.data.addGeoJson(data['geojson']);
+			   		})
+	    }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+        async defer></script>
+  </body>
+</html>
