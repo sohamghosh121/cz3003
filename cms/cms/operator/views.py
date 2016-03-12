@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from ..views import renderTabView
+from ..models import TrafficEvent, TerroristEvent
 from tabview import OperatorTabViews
 
 
@@ -57,3 +58,42 @@ def mapEvents(request):
     tabs = OperatorTabViews()
     tabs.set_active_tab('map')
     return renderTabView(request, tabs, {})
+
+
+def getEventType(event):
+    if isinstance(event, TrafficEvent):
+        return 'traffic'
+    elif isinstance(event, TerroristEvent):
+        return 'terrorist'
+
+
+def getEvents(request):
+    events_list = []
+    events_list.extend(TrafficEvent.objects.all())
+    events_list.extend(TerroristEvent.objects.all())
+    events_list = [{
+        'type': types,
+        'details': e
+    }
+        for e in sorted(events_list, key=lambda x: x.date_recorded, reverse=True)
+    ]
+    return events_list
+
+
+def getEventsGeoJSON(request):
+    data = {}
+    geojson = {'type': 'FeatureCollection', 'features': []}
+    events = getEvents(request)
+    geojson['features'] = [{
+        'type': 'Feature',
+        'geometry': {
+                'type': 'Point',
+                'coordinates': [event['details'].location.x, event['details'].location.y]
+        },
+        'properties': {
+            'type': event['type'],
+            'icon': None
+        }
+    } for event in events]
+    data['geojson'] = geojson
+    return JsonResponse(data, safe=False)
