@@ -149,7 +149,7 @@ def newEvent(request):
                 return HttpResponseBadRequest('nnok')
             newEvent.save()
             AgencyDispatcher(eventlog).dispatch()
-            return HttpResponse('ok')
+            return redirect('/operator/list')
         return HttpResponseBadRequest('nok')
 
 
