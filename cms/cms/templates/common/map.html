@@ -109,7 +109,7 @@
         });
 
         $.ajax({
-    		url: 'getEventsGeoJSON',
+    		url: '/getEventsGeoJSON',
     		data: {},
     		dataType: 'json'
     	}).done(function(data, textStatus, jqXHR) {
@@ -245,7 +245,7 @@
     $(document).ready(function(){
         $('#refreshAPI').click(function() {
              $.ajax({
-                url: 'refreshAPI',
+                url: '/refreshAPI',
             }).done (function() {
                 location.reload();
             })

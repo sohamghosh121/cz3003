@@ -79,9 +79,9 @@
 	<div class="col-md-6">
 		<form action="new" method="post">
 		{% csrf_token %}
-			<input type="tel" placeholder="Identification" name="identification"  />
-			<input type="text" placeholder="Name of person" name="name"  />
-			<input type="tel" placeholder="Contact Number" name="contact"  />
+			<input type="tel" placeholder="Identification" name="identification" maxlength="10" />
+			<input type="text" placeholder="Name of person" name="name"  maxlength="128"/>
+			<input type="tel" placeholder="Contact Number" name="contact"  maxlength="8"/>
 
 			<textarea placeholder="Description" name="description" rows="3" ></textarea>
 			Casulaties:

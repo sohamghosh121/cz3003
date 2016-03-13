@@ -217,38 +217,3 @@ def getEventTypeIcon(eventtype):
     elif eventtype == 'terrorist':
         return 'terrorist.png'
 
-
-def getEventsGeoJSON(request):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
-    data = {}
-    geojson = {'type': 'FeatureCollection', 'features': []}
-    events = getEvents(request)
-    geojson['features'] = [{
-        'type': 'Feature',
-        'geometry': {
-                'type': 'Point',
-                'coordinates': [event['details'].event.location.x, event['details'].event.location.y]
-        },
-        'properties': {
-            'type': event['type'],
-            'icon': getEventTypeIcon(event['type']),
-            'event': {
-                'name': event['details'].event.first_responder.name,
-                'description': event['details'].event.description,
-                'operator': event['details'].event.operator.all()[0].name
-            }
-        }
-    } for event in events]
-    data['geojson'] = geojson
-    return JsonResponse(data, safe=False)
-
-
-def pull_weather(request):
-    return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
-
-def refreshAPI(request):
-    WeatherAPI().pullWeatherUpdate()
-    DengueAPI().pullUpdate()
-    WeatherAPI().pullPSIUpdate()
-    return HttpResponse('ok')

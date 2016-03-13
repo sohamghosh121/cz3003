@@ -3,7 +3,7 @@ from ..tabview import TabView, TabViews, MapView, ListView
 
 class OperatorMapView(MapView):
     url = 'operator/map'
-    template = 'operator/map.html'
+    template = 'common/map.html'
 
 
 class NewEventView(TabView):

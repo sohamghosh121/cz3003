@@ -115,12 +115,11 @@ class Event(models.Model):
 
 
 class TrafficEvent(models.Model):
-
     """
         Traffic event subclass
             - Number of vehicles affected by incident
     """
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     num_vehicles = models.IntegerField(default=0)
 
 
@@ -139,13 +138,12 @@ class TerroristEvent(models.Model):
         (BIOCHEMICAL, 'Biochemical'),
         (HOSTAGE, 'Hostage')
     )
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     num_hostiles = models.IntegerField(default=0)
     attack_type = models.CharField(max_length=3, choices=TYPE_CHOICES)
 
 
 class EventTransactionLog(models.Model):
-
     """
         Stores transaction log of operations on events.
             - Operator who edited/created event (null if not an operator)
@@ -154,7 +152,7 @@ class EventTransactionLog(models.Model):
                 e.g. UPDATE num_casualties
             - Date of transaction (made to be auto now)
     """
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     transaction_type = models.CharField(
         max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
     operator = models.ForeignKey(Operator, blank=True, null=True)
