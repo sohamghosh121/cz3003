@@ -17,17 +17,67 @@
 </head>
 
 <body>
+	<!--<script> -->
+<!-- 	// 	$.ajax({ -->
+<!-- 	// 		url: 'getMapImage',
+	// 		async: false
+	// 	}); -->
+	<!--</script>-->
 	<script>
+		var map = document.getElementById("map");
+		var iconBase = '/static/img/';
+        var weatherMarkers = "markers=icon:";
+        var dengueMarkers = "markers=icon:";
+        var eventMarkers = "markers=icon:";
 		$.ajax({
-			url: 'getMapImage',
-			async: false
-		});
+	    		url: 'getEventsGeoJSON',
+	    		data: {},
+	    		dataType: 'json',
+	    		async: false;
+	    	}).done(function(eventData, textStatus, jqXHR) {
+	    		addIcons(eventData);              
+	    	}).fail(function(){
+	    		console.log('failed'); // some proper failure message
+	    	});
+	        
+        $.ajax({
+                url: '/getWeatherInfo',
+                dataType: 'json',
+                async: false
+            }).done(function (weatherData) {
+            	addIcons(weatherData);
+            });
+
+        $.ajax({
+                url: '/getDengueInfo',
+                dataType: 'json',
+                async: false
+            }).done(function (dengueData) {
+            	addIcons(dengueData);
+        });
+
+        function addIcons(data){
+        	var feature = data.feature;
+        	var type = feature.getProperty('type');
+        	if (type == 'weather') {
+        		var weatherIcon = iconBase + feature.getProperty('icon');
+        		weatherMarkers += weatherIcon;
+        	}else if (type == 'dengue'){
+        		var dengueIcon = iconBase + feature.getProperty('icon');
+        		dengueMarkers += dengueIcon;
+        	}else if(type == 'traffic' || type == 'terrorist'){
+        		var eventIcon = iconBase + feature.getProperty('icon');
+        		eventMarkers += eventIcon;
+        	}
+        }    
 	</script>
 	<h1 style="text-align:center;" ><b>Automatically generated report by CMS System</b></h1>
 	<ol>
 		<li id='time'></li>
 		<li id='map'><b>Map information:</b></li>
-		<img src="{% static 'img/map_screenshot.png' %}" height="700" width="1100">
+		<img id="map" src="https://maps.googleapis.com/maps/api/staticmap?center=Singapore&size=640x640&maptype=roadmap&zoom=11&key=AIzaSyBhT6uGESFhrvcUxK76iQzr90H6x-d1OLs" width="640">
+
+<!-- 		style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true -->
 		<li><b>Traffic accidents:</b>
 			<ul>
 				<li id='accidents'></li>
