@@ -19,7 +19,7 @@ class DengueAPI(PullAPI):
     DENGUE_URL = "https://ref.data.gov.sg/common/Handler.ashx?ThemeName=DENGUE_CLUSTER&MetaDataID=227753&Format=shp"
     DENGUE_SHP_FILENAME = "DENGUE_CLUSTER.shp"
     DENGUE_ZIP_FILENAME = "DENGUE_CLUSTER.zip"
-    DENGUE_EXTRACTED_FOLDER = "dengue_extracted"
+    DENGUE_EXTRACTED_FOLDER = "pullapis/dengue_extracted"
 
     def downloadFile(self, url, downloadFileName):
         r = requests.get(url, stream=True)
@@ -58,8 +58,6 @@ class DengueAPI(PullAPI):
 
     def returnGeoJson(self):
         dengue = Dengue.objects.all()
-        for d in dengue:
-            print d.geom
         denguejson = json.loads(serialize('geojson', dengue))
         for x in denguejson['features']:
             x['properties']['type'] = 'dengue'
