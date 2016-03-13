@@ -36,5 +36,7 @@ urlpatterns = [
     url(r'^report/', TemplateView.as_view(template_name='report.html')),
     url(r'^public', TemplateView.as_view(template_name='public.html')),
     url(r'^getWeatherInfo', views.getWeatherInfo),
-    url(r'^getDengueInfo', views.getDengueInfo)
+    url(r'^getDengueInfo', views.getDengueInfo),
+    url(r'^refreshAPI', views.refreshAPI),
+    url(r'^getEventsGeoJSON', views.getEventsGeoJSON)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -28,8 +28,12 @@ class WeatherAPI(PullAPI):
                     - PSI Info
                     - PM2.5 Info
         """
-        self.pullWeatherUpdate()
-        self.pullPSIUpdate()
+        try:
+            w = self.pullWeatherUpdate()
+            p = self.pullPSIUpdate()
+            return w and p
+        except:
+            return False
 
     def pullWeatherUpdate(self):
         """

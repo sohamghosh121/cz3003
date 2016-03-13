@@ -48,13 +48,16 @@ class DengueAPI(PullAPI):
         os.system(command_to_run)
 
     def pullUpdate(self):
-        if (self.downloadFile(self.DENGUE_URL, self.DENGUE_ZIP_FILENAME)):
-            if (self.unzip(self.DENGUE_ZIP_FILENAME, self.DENGUE_EXTRACTED_FOLDER)):
-                fileDirectory = "%s/%s" % (
-                    self.DENGUE_EXTRACTED_FOLDER, self.DENGUE_SHP_FILENAME)
-                self.updateDengueInfoInDatabase(fileDirectory)
-                return True
-        return False
+        try:
+            if (self.downloadFile(self.DENGUE_URL, self.DENGUE_ZIP_FILENAME)):
+                if (self.unzip(self.DENGUE_ZIP_FILENAME, self.DENGUE_EXTRACTED_FOLDER)):
+                    fileDirectory = "%s/%s" % (
+                        self.DENGUE_EXTRACTED_FOLDER, self.DENGUE_SHP_FILENAME)
+                    self.updateDengueInfoInDatabase(fileDirectory)
+                    return True
+            return False
+        except:
+            return False
 
     def returnGeoJson(self):
         self.pullUpdate()

@@ -23,11 +23,20 @@ class ListView(TabView):
 
 class TabViews:
 
+    """
+        Wrapper class to encapsulate tab views.
+    """
+
     def __init__(self):
-        # add tabs in order here
+        """
+            Initiate class with the required TabView classes in self.tabs
+        """
         self.tabs = []
 
     def set_active_tab(self, tab_id):
+        """
+            Takes a tab_id and sets the active tab to the one with matching tab_id
+        """
         for tab in self.tabs:
             if tab_id == tab.tab_id:
                 tab.is_active = True
@@ -35,6 +44,9 @@ class TabViews:
                 tab.is_active = False
 
     def get_active_tab(self):
+        """
+            Return the active tab
+        """
         for tab in self.tabs:
             if tab.is_active:
                 return tab
