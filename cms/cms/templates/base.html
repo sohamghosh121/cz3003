@@ -9,14 +9,19 @@
 	<link rel="stylesheet" href="{% static 'css/base.css' %}">
 	<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-	<title>Dashboard | {% block title %} {% endblock %}</title>
+	<title>CMS | {% block title %} {% endblock %}</title>
 </head>
 
 <body>
 	<div id="header" class="navbar-collapse">
 		<div id="logo_section">
-			 Crisis Management System
+			 CMS | {{ usertype }}
 		</div>
+		<a href="/logout">
+			<div id="logout">
+				Logout
+			</div>
+		</a>
 	</div>
 		<div class="nav navbar-nav sidebar col-md-3">
 

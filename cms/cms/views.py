@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login as dologin
+from django.contrib.auth import authenticate, login as dologin, logout
 
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import render, redirect
@@ -35,12 +35,24 @@ def healthCheck(request):
     return HttpResponse('It\'s all good!')
 
 
+def getUserType(request):
+    if request.user.is_authenticated():
+        if isOperator(request.user):
+            return 'Operator'
+        elif isAdmin(request.user):
+            return 'Admin'
+
+    else:
+        return 'Public'
+
+
 def renderTabView(request, tabs, data={}):
     active_tab = tabs.get_active_tab()
     if active_tab:
         return render(request, active_tab.template,
                       {'title': active_tab.title,
                        'data': data,
+                       'usertype': getUserType(request),
                        'tabs': tabs.tabs})
     else:
         return HttpResponse('ERROR')

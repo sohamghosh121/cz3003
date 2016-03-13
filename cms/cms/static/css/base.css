@@ -18,13 +18,14 @@ body {
 	display: inline-block;
 }
 
-#partner_name {
+#logout {
 	display: inline-block;
     float: right;
     line-height: 70px;
-    font-size: 0.8em;
+    font-size: 0.6em;
     color: #ccc;
 }
+
 
 #logo_image {
 	max-width: 40px;
