@@ -17,74 +17,34 @@
 </head>
 
 <body>
-	<!--<script> -->
-<!-- 	// 	$.ajax({ -->
-<!-- 	// 		url: 'getMapImage',
-	// 		async: false
-	// 	}); -->
-	<!--</script>-->
+	
 	<script>
 		var map = document.getElementById("map");
-		var iconBase = '/static/img/';
-        var weatherMarkers = "markers=icon:";
-        var dengueMarkers = "markers=icon:";
-        var eventMarkers = "markers=icon:";
+		var imgBase = '/static/img/';
 		$.ajax({
-	    		url: 'getEventsGeoJSON',
-	    		data: {},
-	    		dataType: 'json',
-	    		async: false;
-	    	}).done(function(eventData, textStatus, jqXHR) {
-	    		addIcons(eventData);              
-	    	}).fail(function(){
-	    		console.log('failed'); // some proper failure message
-	    	});
-	        
-        $.ajax({
-                url: '/getWeatherInfo',
-                dataType: 'json',
-                async: false
-            }).done(function (weatherData) {
-            	addIcons(weatherData);
-            });
-
-        $.ajax({
-                url: '/getDengueInfo',
-                dataType: 'json',
-                async: false
-            }).done(function (dengueData) {
-            	addIcons(dengueData);
+            url: '/report/getMapImage',
+            method:'GET'
+        }).done(function (reponse) {
+        	var images = ['crisis_screenshot.png','traffic_screenshot.png','terrorist_screenshot.png','weather_screenshot.png','dengue_screenshot.png'];
+        	$.each(images, function(){
+			    $('#mapList').append('<li><img src="' + imgBase + this + '" /></li>'); 
+			});
         });
-
-        function addIcons(data){
-        	var feature = data.feature;
-        	var type = feature.getProperty('type');
-        	if (type == 'weather') {
-        		var weatherIcon = iconBase + feature.getProperty('icon');
-        		weatherMarkers += weatherIcon;
-        	}else if (type == 'dengue'){
-        		var dengueIcon = iconBase + feature.getProperty('icon');
-        		dengueMarkers += dengueIcon;
-        	}else if(type == 'traffic' || type == 'terrorist'){
-        		var eventIcon = iconBase + feature.getProperty('icon');
-        		eventMarkers += eventIcon;
-        	}
-        }    
 	</script>
-	<h1 style="text-align:center;" ><b>Automatically generated report by CMS System</b></h1>
+	<h1 style="text-align:center;" ><b>Prime Minister Report by CMS</b></h1>
 	<ol>
 		<li id='time'></li>
-		<li id='map'><b>Map information:</b></li>
-		<img id="map" src="https://maps.googleapis.com/maps/api/staticmap?center=Singapore&size=640x640&maptype=roadmap&zoom=11&key=AIzaSyBhT6uGESFhrvcUxK76iQzr90H6x-d1OLs" width="640">
-
-<!-- 		style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true -->
+		<li id='map'><b>Maps</b>
+			<ul id = "mapList">
+			</ul>
+		</li>
+		
 		<li><b>Traffic accidents:</b>
 			<ul>
 				<li id='accidents'></li>
 				<li id='vehicles'></li>
 				<li id='traffic-casualties'></li>
 				<li id='traffic-injuries'></li>
-				<li id='traffic-locations'></li>
 			</ul>
 		</li>
 		<li><b>Terrorist attacks:</b>
@@ -93,11 +53,13 @@
 				<li id='hostiles'></li>
 				<li id='terrorist-casualties'></li>
 				<li id='terrorist-injuries'></li>
-				<li id='terrorist-locations'></li>
-				<li id='terrorist-types'></li>
 			</ul>
 		</li>
-		<li><b>Crisis level:</b></li>
+		<li><b>Crisis level:</b>
+			<ul id = "districts">
+
+			</ul>
+		</li>
 	</ol>
 	<script src="{% static 'js/report.js' %}"></script>
 </body>

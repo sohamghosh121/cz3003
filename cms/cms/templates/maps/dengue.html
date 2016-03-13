@@ -69,6 +69,7 @@ body {
 
 <div id="map">
 </div>
+<div style="display:none" class="complete" ></div>
 
 <script>
     var marker;
@@ -98,6 +99,7 @@ body {
             }).done(function (data) {
                 dengueGeoJSON = data;
                 map.data.addGeoJson(data);
+                $(".complete").attr("id","done");
         })
 
         map.data.addListener('click', function(event) {

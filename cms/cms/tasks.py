@@ -29,3 +29,10 @@ def pull_apis(self):
     for api in apis:
         api.pullUpdate()
     return 'Success'
+
+@task(name="save-map-screenshots", bind=True)
+def pull_apis(self):
+    """
+        Background task to periodically save screenshots
+    """
+    return 'Success'

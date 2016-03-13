@@ -30,4 +30,4 @@ class PMODispatcher:
         """
         self.generatePDF()
         EmailAPI().pushUpdate(
-            PMO_EMAIL, 'Crisis Management System Report', getEmailContent())
+            self.PMO_EMAIL, 'Crisis Management System Report', getEmailContent(), attachment='out.pdf')

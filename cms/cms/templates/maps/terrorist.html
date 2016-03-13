@@ -69,6 +69,7 @@ body {
 
 <div id="map">
 </div>
+<div style="display:none" class="complete" ></div>
 
 <script>
     var marker;
@@ -105,6 +106,7 @@ body {
                     map.data.remove(feature);
                 }
             });
+            $(".complete").attr("id","done");
         }).fail(function(){
             console.log('failed'); // some proper failure message
         });

@@ -72,7 +72,7 @@ body {
 </div>
 <div id="map">
 </div>
-
+<div style="display:none" class="complete" ></div>
 <script>
     var marker;
 
@@ -101,6 +101,7 @@ body {
                 dataType: 'json'
             }).done(function (data) {
                  map.data.addGeoJson(data);
+                  $(".complete").attr("id","done");
             });  
         };
 
