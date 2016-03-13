@@ -9,6 +9,14 @@ class Weather(gismodels.Model):
     condition = models.CharField(max_length=2, blank=True)
 
 
+class Haze(gismodels.Model):
+    districtname = models.CharField(max_length=128, primary_key=True)
+    location = gismodels.PointField()
+    PSI = models.IntegerField(default=0)
+    PM25 = models.IntegerField(default=0)
+    PM10 = models.IntegerField(default=0)
+
+
 class Dengue(models.Model):
     gid = models.AutoField(primary_key=True)
     objectid = models.IntegerField(blank=True, null=True)

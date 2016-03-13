@@ -29,15 +29,60 @@
     border:1px solid #c7c7c7;
     border-radius: 4px;
 }
+
+#haze {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    min-width: 100px;
+    height: 160px;
+    padding: 7px;
+    background: rgba(250,250,250,0.8);
+    border-radius: 8px;
+
+}
+
+#haze table {
+    text-align: center;
+}
+
+#haze thead {
+    border-bottom: 1px solid #787878;
+}
+
+#haze tr, #haze th {
+    height: 14.8257%;
+    text-align: center;
+}
+
+#haze td {
+    width: 25%;
+}
 </style>
 <div id="filters-div">
     <span class="filter-option"> Show Weather <input type="checkbox" name="filter" value="weather" checked /> </span>
     <span class="filter-option"> Show Dengue <input type="checkbox" name="filter" value="dengue" checked /> </span>
+    <span class="filter-option haze-filter-option"> Show Haze <input type="checkbox" name="filter" value="haze" checked /> </span>
     <span class="filter-option"> Show Traffic Events <input type="checkbox" name="filter" value="traffic" checked /> </span>
     <span class="filter-option"> Show Terrorist Events <input type="checkbox" name="filter" value="terrorist" checked /> </span>
+
 </div>
 
 <div id="map">
+</div>
+
+<div id="haze">
+    <table>
+        <thead>
+            <th> </th> <th> PSI </th> <th> PM10 </th> <th> PM2.5 </th>
+        </thead>
+        {% for haze in data.haze %}
+            <tr>
+                <td> {{ haze.districtname }} </td> <td> {{ haze.PSI }} </td>   <td> {{ haze.PM10 }}</td> <td> {{ haze.PM25 }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
 </div>
 
 
@@ -80,7 +125,7 @@
             }).done(function (data) {
                  weatherGeoJSON = data;
                  map.data.addGeoJson(data);
-            });  
+            });
 
         $.ajax({
                 url: '/getDengueInfo',
@@ -131,8 +176,8 @@
                 icon: {
                     url:iconbase + feature.getProperty('icon'),
                     scaledSize: {
-                        width: 40,
-                        height:40
+                        width: 30,
+                        height:30
                     }
                 },
                 title: feature.getProperty('name') + ":" + feature.getProperty('condition_long')
@@ -191,6 +236,10 @@
                             map.data.remove(feature);
                         }
                     });
+        });
+
+        $('.haze-filter-option input[type="checkbox"]').change(function(){
+            $('#haze').toggle();
         });
     }
 

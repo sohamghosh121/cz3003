@@ -4,7 +4,7 @@
 
 import requests
 from xml.etree import ElementTree
-from cms.models import Weather
+from cms.models import Weather, Haze
 from django.contrib.gis.geos import Point
 from pullapi import PullAPI
 
@@ -14,16 +14,30 @@ class WeatherAPI(PullAPI):
     """
             WeatherAPI Class for weather.py
     """
-    NOWCAST_URL = "http://www.nea.gov.sg/api/WebAPI/?dataset=2hr_nowcast&keyref=781CF461BB6606AD62B1E1CAA87ECA614712A08DDD7A7DC7"
+    API_KEY = '781CF461BB6606AD62B1E1CAA87ECA614712A08DDD7A7DC7'
+
+    NOWCAST_URL = 'http://www.nea.gov.sg/api/WebAPI/?dataset=2hr_nowcast&keyref=%s' % API_KEY
+    PSI_URL = 'http://www.nea.gov.sg/api/WebAPI?dataset=psi_update&keyref=%s' % API_KEY
+    PM2_5_URL = 'http://www.nea.gov.sg/api/WebAPI?dataset=pm2.5_update&keyref=%s' % API_KEY
 
     def pullUpdate(self):
         """
-                pulls nowcast weather info from NEA
+                Pulls Weather info from NEA:
+                Includes
+                    - Weather Info
+                    - PSI Info
+                    - PM2.5 Info
+        """
+        self.pullWeatherUpdate()
+        self.pullPSIUpdate()
+
+    def pullWeatherUpdate(self):
+        """
+            Pulls Nowcast data
         """
         r = requests.get(self.NOWCAST_URL)
         if (r.status_code == 200):
             root = ElementTree.fromstring(r.content)
-            print root
             for area in root.iter('area'):
                 districtname = area.get('name')
                 lon = float(area.get('lon'))
@@ -33,6 +47,40 @@ class WeatherAPI(PullAPI):
                     districtname=districtname, location=Point(lon, lat))
                 w.condition = con
                 w.save()
+            return True
+        else:
+            print r.status_code
+            return False
+
+    def pullPSIUpdate(self):
+        """
+            Pulls PSI Data
+        """
+        r = requests.get(self.PSI_URL)
+        if (r.status_code == 200):
+            root = ElementTree.fromstring(r.content)
+            haze_object = {}
+            pt = Point(0, 0)
+            for region in root.iter('region'):
+                for child in region:
+                    if child.tag == 'id':
+                        haze_object['districtname'] = child.text
+                    elif child.tag == 'latitude':
+                        pt.y = float(child.text)
+                    elif child.tag == 'longitude':
+                        pt.x = float(child.text)
+                    elif child.tag == 'record':
+                        for reading in child:
+                            if reading.get('type') == 'NPSI':
+                                haze_object['PSI'] = int(reading.get('value'))
+                            elif reading.get('type') == 'NPSI_PM25':
+                                haze_object['PM25'] = int(reading.get('value'))
+                            elif reading.get('type') == 'NPSI_PM10':
+                                haze_object['PM10'] = int(reading.get('value'))
+                haze_object['location'] = pt
+                w, created = Haze.objects.get_or_create(
+                    districtname=haze_object['districtname'], defaults=haze_object)
+            w.save()
             return True
         else:
             print r.status_code
@@ -82,7 +130,6 @@ class WeatherAPI(PullAPI):
         """
                 returns GeoJson Data to be added into map
         """
-        self.pullUpdate()
         weather = Weather.objects.all()
         geojson = {'type': 'FeatureCollection', 'features': []}
         for w in weather:

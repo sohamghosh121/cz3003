@@ -57,7 +57,6 @@ class DengueAPI(PullAPI):
         return False
 
     def returnGeoJson(self):
-        DengueAPI().pullUpdate()
         dengue = Dengue.objects.all()
         for d in dengue:
             print d.geom

@@ -18,6 +18,14 @@
 
 }
 
+.events-table tbody tr:nth-child(even) {
+	background: #efefef;
+}
+
+.events-table tbody tr:nth-child(odd) {
+	background: #ddd;
+}
+
 .events-table tbody tr {
 	height: 33px;
 }
@@ -117,7 +125,7 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}
 						<img src="{% static 'img/caraccident.png' %}" class="details-img"/>{{event.num_vehicles}}
 					</td> 
-					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <i class="fa fa-toggle-{% if event.event.isactive %}on{% else %}off{% endif %} edit-controls"></i> </td>
+					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <a class="fa fa-toggle-on edit-controls" href="deactivateEvent?eventid={{event.event.id}}"></a> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -140,20 +148,25 @@
 		<tbody>
 			{% for event in data.terroristevents %}
 				<tr class="{% if not event.event.isactive %}inactive-row{% endif %}">
-					<td> {{ event.event.first_responder.name }} (*) 
-							{% for person in event.event.reporters %}
+					<td> 
+						{{ event.event.first_responder.name }} (*) 
+							{% for person in event.event.reporters.all %}
 								<br> {{person.name}}
 							{% endfor %}
-
 					</td> 
-					<td> {{ event.event.contact_number}} </td> 
-					<td> <p class="truncate"> {{ event.event.description}} </p> </td> 
+					<td> 
+							{{ event.event.first_responder.contact_number }}
+							{% for person in event.event.reporters.all %}
+								<br> {{person.contact_number}}
+							{% endfor %}
+					</td> 
+					<td> <p class="truncate">  {{ event.event.description}} </p> </td> 
 					<td> 
 						<img src="{% static 'img/dead.png' %}" class="details-img"/> {{ event.event.num_casualties}} 
 						<img src="{% static 'img/injury.png' %}" class="details-img"/> {{event.event.num_injured}}
 						<img src="{% static 'img/terrorist.png' %}" class="details-img"/> {{event.num_hostiles}}
 					</td> 
-					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <i class="fa fa-toggle-{% if event.event.isactive %}on{% else %}off{% endif %} edit-controls"></i>  </td>
+					<td> <i class="fa fa-edit edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <a class="fa fa-toggle-on edit-controls"></a>  </td>
 				</tr>
 			{% endfor %}
 		</tbody>

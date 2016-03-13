@@ -3,7 +3,7 @@ from ..views import renderTabView, isOperator, isAdmin
 from django.shortcuts import render, redirect
 from django.contrib.gis.geos import Point
 from django.contrib.auth.decorators import login_required
-from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter
+from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter, Haze
 from ..dispatchers.agencydispatcher import AgencyDispatcher
 from tabview import OperatorTabViews
 
@@ -17,6 +17,25 @@ def latLngToPoint(stringobj):
     return Point(float(lng), float(lat))
 
 
+@login_required
+def deactivateEvent(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
+    eventid = request.GET.get('eventid')
+    e = Event.objects.get(id=eventid)
+    e.isactive = False
+    e.save()
+    operator = Operator.objects.get(user_ptr_id=request.user.id)
+    eventlog = EventTransactionLog.objects.create(
+        event=e,
+        transaction_type='ED',
+        operator=operator,
+        desc='DEACTIVATE event')
+    eventlog.save()
+    return redirect('/operator/list')
+
+
+@login_required
 def updateEvent(request):
     if not isOperator(request.user):
         return HttpResponseBadRequest()
@@ -60,7 +79,7 @@ def updateEvent(request):
         operator = Operator.objects.get(user_ptr_id=request.user.id)
         if operator not in event.event.operator.all():
             event.event.operator.add(operator)
-        if reporter not in event.event.reporter.all() or reporter != event.event.first_responder:
+        if reporter not in event.event.reporters.all() or reporter != event.event.first_responder:
             event.event.reporters.add(reporter)
         eventlog = EventTransactionLog.objects.create(
             event=event.event,
@@ -150,7 +169,7 @@ def mapEvents(request):
     #     return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('map')
-    return renderTabView(request, tabs, {})
+    return renderTabView(request, tabs, {'haze': Haze.objects.all()})
 
 
 def getEventType(event):
