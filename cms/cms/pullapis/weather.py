@@ -96,7 +96,7 @@ class WeatherAPI(PullAPI):
         """
         return {
             'BR': ('Mist', 'haze.png'),
-            'CL': ('Cloudy', 'cloudy.png'),
+            'CL': ('Cloudy', 'darkcloud.png'),
             'DR': ('Drizzle', 'lightrain.png'),
             'FA': ('Fair (Day)', 'sunny.png'),
             'FG': ('Fog', 'haze.png'),
@@ -110,7 +110,7 @@ class WeatherAPI(PullAPI):
             'LH': ('Slightly Hazy', 'haze.png'),
             'LR': ('Light Rain', 'lightrain.png'),
             'LS': ('Light Showers', 'lightrain.png'),
-            'OC': ('Overcast', 'cloud.png'),
+            'OC': ('Overcast', 'darkcloud.png'),
             'PC': ('Partly Cloudy (Day)', 'partialsun.png'),
             'PN': ('Partly Cloudy (Night)', 'partialnight.png'),
             'PS': ('Passing Showers', 'shower.png'),
