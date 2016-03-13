@@ -61,13 +61,16 @@
           zoom: 11
         });
         
-        $.ajax({
+        var getDistricts = function() {
+            $.ajax({
                 url: '/admin/getDistricts',
                 dataType: 'json'
             }).done(function (data) {
                  map.data.addGeoJson(data);
             });  
+        };
 
+        getDistricts();
 
         var crisisSetterForm
 
@@ -138,9 +141,7 @@
                 };
             }
         });
-        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
-            document.getElementById('legend'));
-        }
+
         $( "#map" ).delegate('#CrisisButton','click', function() {
             var district = $( "#CrisisButton" ).val();
             var selectbuttonname = "#"+district+"Select"
@@ -157,9 +158,18 @@
                     dataType: 'json',
                     method: 'GET',
                 })
-                location.reload();
+                infowindow.close();
+                map.data.forEach(function(feature) {
+                        map.data.remove(feature);
+                });
+                getDistricts();
             }  
         });
+
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
+            document.getElementById('legend'));
+        }
+        
 
 </script>
 
