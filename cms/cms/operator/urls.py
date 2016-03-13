@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^deactivateEvent', views.deactivateEvent),
     url(r'^getEventsGeoJSON', views.getEventsGeoJSON),
     url(r'^getEventUpdateForm', views.getEventUpdateForm),
+    url(r'^refreshAPI', views.refreshAPI)
 ]
