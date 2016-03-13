@@ -217,10 +217,9 @@ def getEventTypeIcon(eventtype):
     elif eventtype == 'terrorist':
         return 'terrorist.png'
 
-
 def getEventsGeoJSON(request):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
+    # if not isOperator(request.user):
+    #     return HttpResponseBadRequest()
     data = {}
     geojson = {'type': 'FeatureCollection', 'features': []}
     events = getEvents(request)

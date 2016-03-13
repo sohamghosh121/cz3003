@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
 from models import Operator, Admin
-
+from models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter, Haze
 from pullapis.weather import WeatherAPI
 from pullapis.dengue import DengueAPI
 
@@ -49,11 +49,10 @@ def getUserType(request):
         Get user type if authenticated. If not, user is public.
     """
     if request.user.is_authenticated():
-        if isOperator(request.user):
-            return 'Operator'
-        elif isAdmin(request.user):
+        if isAdmin(request.user):
             return 'Admin'
-
+        elif isOperator(request.user):
+            return 'Operator'
     else:
         return 'Public'
 
@@ -129,3 +128,62 @@ def getDengueInfo(request):
             - Dengue hotzones
     """
     return JsonResponse(DengueAPI().returnGeoJson(), safe=False)
+
+def refreshAPI(request):
+    WeatherAPI().pullWeatherUpdate()
+    DengueAPI().pullUpdate()
+    WeatherAPI().pullPSIUpdate()
+    return HttpResponse('ok')
+
+def getEventsGeoJSON(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
+    data = {}
+    geojson = {'type': 'FeatureCollection', 'features': []}
+    events = getEvents(request)
+    geojson['features'] = [{
+        'type': 'Feature',
+        'geometry': {
+                'type': 'Point',
+                'coordinates': [event['details'].event.location.x, event['details'].event.location.y]
+        },
+        'properties': {
+            'type': event['type'],
+            'icon': getEventTypeIcon(event['type']),
+            'event': {
+                'name': event['details'].event.first_responder.name,
+                'description': event['details'].event.description,
+                'operator': event['details'].event.operator.all()[0].name
+            }
+        }
+    } for event in events]
+    data['geojson'] = geojson
+    return JsonResponse(data, safe=False)
+
+def getEvents(request):
+    if not isOperator(request.user):
+        return HttpResponseBadRequest()
+    events_list = []
+    events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
+    events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
+    events_list = [{
+        'type': getEventType(e),
+        'details': e
+    }
+        for e in sorted(events_list, key=lambda x: x.event.date_recorded, reverse=True)
+    ]
+    return events_list
+
+
+def getEventTypeIcon(eventtype):
+    if eventtype == 'traffic':
+        return 'caraccident.png'
+    elif eventtype == 'terrorist':
+        return 'terrorist.png'
+
+def getEventType(event):
+    if isinstance(event, TrafficEvent):
+        return 'traffic'
+    elif isinstance(event, TerroristEvent):
+        return 'terrorist'
+

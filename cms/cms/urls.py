@@ -30,9 +30,13 @@ urlpatterns = [
     url(r'^admin/', include('cms.admin.urls')),
     url(r'^report/', include('cms.report.urls')),
     url(r'^login_view', views.loginView),
-    url(r'^login/', TemplateView.as_view(template_name='login.html')),
-    url(r'^logout/', views.logoutView),
+    url(r'^login', TemplateView.as_view(template_name='login.html')),
+    url(r'^logout', views.logoutView),
+    url(r'^index', TemplateView.as_view(template_name='index.html')),
     url(r'^report/', TemplateView.as_view(template_name='report.html')),
+    url(r'^public', TemplateView.as_view(template_name='public.html')),
     url(r'^getWeatherInfo', views.getWeatherInfo),
-    url(r'^getDengueInfo', views.getDengueInfo)
+    url(r'^getDengueInfo', views.getDengueInfo),
+    url(r'^refreshAPI', views.refreshAPI),
+    url(r'^getEventsGeoJSON', views.getEventsGeoJSON)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
