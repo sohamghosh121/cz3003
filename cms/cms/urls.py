@@ -38,5 +38,10 @@ urlpatterns = [
     url(r'^getWeatherInfo', views.getWeatherInfo),
     url(r'^getDengueInfo', views.getDengueInfo),
     url(r'^refreshAPI', views.refreshAPI),
-    url(r'^getEventsGeoJSON', views.getEventsGeoJSON)
+    url(r'^getEventsGeoJSON', views.getEventsGeoJSON),
+    url(r'^maps/weather', TemplateView.as_view(template_name='maps/weather.html')),
+    url(r'^maps/dengue', TemplateView.as_view(template_name='maps/dengue.html')),
+    url(r'^maps/terrorist', TemplateView.as_view(template_name='maps/terrorist.html')),
+    url(r'^maps/traffic', TemplateView.as_view(template_name='maps/traffic.html')),
+    url(r'^maps/crisis', TemplateView.as_view(template_name='maps/crisis.html')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,21 +1,25 @@
-{% extends "base.html" %}
-{% block title %}{{title}}{% endblock %}
-
-{% block content %}
-
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weather Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 <style>
 
 #content {
-	padding: 0px;
+    padding: 0px;
 }
 #map {
-	width: 100%;
-	height: calc(100vh - 70px);
+    width: 100%;
+    height: 100vh;
 }
 
-#filters-div {
-    height: 60px;
-    padding: 10px 15px;
+body {
+    padding: 0px;
+    margin: 0px;
 }
 
 .marker-content {
@@ -29,18 +33,48 @@
     border:1px solid #c7c7c7;
     border-radius: 4px;
 }
-</style>
 
-<div id="map">
-</div>
+#haze {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    min-width: 100px;
+    height: 160px;
+    padding: 7px;
+    background: rgba(250,250,250,0.8);
+    border-radius: 8px;
+
+}
+
+#haze table {
+    text-align: center;
+}
+
+#haze thead {
+    border-bottom: 1px solid #787878;
+}
+
+#haze tr, #haze th {
+    height: 14.8257%;
+    text-align: center;
+}
+
+#haze td {
+    width: 25%;
+}
+</style>
+</head>
+
+<body>
 
 <div id = "legend">
     <img src =  "/static/img/crisislegend.png" width = "50px" height="180px"/>
 </div>
-
-
+<div id="map">
+</div>
+<div style="display:none" class="complete" ></div>
 <script>
-	var marker;
+    var marker;
 
     function generateInfoWindowHtml(event){
         var html = '<div class="marker-content"><p>' +
@@ -51,7 +85,7 @@
         return html;
     }
 
-	function initMap() {
+    function initMap() {
         var mapDiv = document.getElementById('map');
         var infowindow =  new google.maps.InfoWindow();
         var weatherGeoJSON, eventsGeoJSON, dengueGeoJSON;
@@ -60,13 +94,14 @@
           center: {lat: 1.364922150947930, lng: 103.80912780761719},
           zoom: 11
         });
-        
+
         var getDistricts = function() {
             $.ajax({
                 url: '/admin/getDistricts',
                 dataType: 'json'
             }).done(function (data) {
                  map.data.addGeoJson(data);
+                  $(".complete").attr("id","done");
             });  
         };
 
@@ -80,7 +115,7 @@
             var type = feature.getProperty('type');
 
             if (type == 'district') {
-                infowindow.setContent("<div style='width:170px; text-align:center; padding: 5px;'><b>"+feature.getProperty('name_1') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+'crisis.png'+"' height= 30px width = 30px/>  Crisis: <span style='font-size: 60px'>"+ feature.getProperty('crisis') +"</span><hr/><div class='setter' ><select style = 'width:100%; background-color:rgba(210, 77, 87, 0.2); padding :2px; margin-bottom:3px;'id ='"+ feature.getProperty('name_1') + "Select'> <option value='0'>0</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option> <option value='4'>4</option><option value='5'>5</option></select><button style='background-color:#e74c3c; width:100%; color:white; class='crisisButton' id ='CrisisButton' value='"+feature.getProperty('name_1') +"'>Change</button></div></div>");
+                infowindow.setContent("<div style='width:170px; text-align:center; padding: 5px;'><b>"+feature.getProperty('name_1') + "</b><hr style='margin:3px;'/> <img src='" + iconbase+'crisis.png'+"' height= 30px width = 30px/>  Crisis: <span style='font-size: 60px'>"+ feature.getProperty('crisis') +"</span>");
 
                 infowindow.setPosition(new google.maps.LatLng(feature.getProperty('center')[0],feature.getProperty('center')[1]));
                 infowindow.open(map);
@@ -141,35 +176,18 @@
                 };
             }
         });
-
-        $( "#map" ).delegate('#CrisisButton','click', function() {
-            var district = $( "#CrisisButton" ).val();
-            var selectbuttonname = "#"+district+"Select"
-            var newvalue = $(selectbuttonname).val();
-            var textToDisplay = "Confirm Set Crisis Level of "+ district + " to " + newvalue + "?"
-            var r = confirm(textToDisplay);
-            if (r == true){
-                $.ajax({
-                    url: '/admin/setCrisis',
-                    data: {
-                        district: district,
-                        newcrisis: newvalue
-                    },
-                    dataType: 'json',
-                    method: 'GET',
-                })
-                infowindow.close();
-                map.data.forEach(function(feature) {
-                        map.data.remove(feature);
-                });
-                getDistricts();
-            }  
-        });
-
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
-            document.getElementById('legend'));
-        }
-
+            document.getElementById('legend'));        
+    }
+    $(document).ready(function(){
+        $('#refreshAPI').click(function() {
+             $.ajax({
+                url: '/refreshAPI',
+            }).done (function() {
+                location.reload();
+            })
+        });
+    });
 
 </script>
 
@@ -177,4 +195,5 @@
         async defer></script>
 
 
-{% endblock content %}
+</body>
+</html>

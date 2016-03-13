@@ -141,6 +141,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(seconds=10),
         'args': ()
     },
+    'save-map-screenshots': {
+        'task': 'do-pull-apis',
+        'schedule': timedelta(seconds=600),
+        'args': ()
+    },
 }
 
 # DJANGO SERIALIZER

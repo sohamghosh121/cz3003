@@ -19,13 +19,10 @@ def getTransactionLog(request):
         'crisisLogDatabase': CrisisTransactionLog.objects.all(),
     })
 
-@login_required
 def getCrisisView(request):
     """
         Set crisis manager as active tab
     """
-    if not isAdmin(request.user):
-        return HttpResponseBadRequest()
     tabs = AdminTabViews()
     tabs.set_active_tab('crisis')
     return renderTabView(request, tabs, {
@@ -64,7 +61,10 @@ def getAdminOrOperator(log):
 def getDistricts(request):
     return JsonResponse(DistrictManager().returnGeoJson(), safe=False)
 
+@login_required
 def setCrisis(request):
+    if not isAdmin(request.user):
+        return HttpResponseBadRequest()
     CrisisManager().setCrisisLevel(request.GET.get('district'), request.GET.get('newcrisis'), None)
     return HttpResponse("Success", content_type="text/plain")
 

@@ -55,6 +55,19 @@ function displayTerrorist(data){
 	terroristTypes.innerHTML = typeString;
 }
 
+function displayCrisis(data){
+	$.each(data, function(key,value){
+		$('#districts').append('<li>' + key +': ' + value+'</li>'); 
+	});
+}
+
+$.ajax( {
+	url: 'getCrisisInfo',
+	dataType: 'json'
+}).done(function (data) {
+	displayCrisis(data);
+});
+
 $.ajax({
 	url: 'getTrafficInfo',
 	data: {},

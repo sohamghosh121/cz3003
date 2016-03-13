@@ -139,8 +139,6 @@ def refreshAPI(request):
 
 
 def getEventsGeoJSON(request):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
     data = {}
     geojson = {'type': 'FeatureCollection', 'features': []}
     events = getEvents(request)
@@ -165,8 +163,6 @@ def getEventsGeoJSON(request):
 
 
 def getEvents(request):
-    if not isOperator(request.user):
-        return HttpResponseBadRequest()
     events_list = []
     events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
     events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
@@ -191,3 +187,4 @@ def getEventType(event):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
         return 'terrorist'
+

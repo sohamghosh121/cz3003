@@ -38,4 +38,10 @@ def check_crisis(self):
         Background task to periodically pull APIs for weather and dengue
     """
     CrisisCalculator().checkCrisis()
+
+@task(name="save-map-screenshots", bind=True)
+def pull_apis(self):
+    """
+        Background task to periodically save screenshots
+    """
     return 'Success'
