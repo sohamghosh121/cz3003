@@ -6,6 +6,7 @@ from datetime import timedelta
 from cms.pullapis.dengue import DengueAPI
 from cms.pullapis.weather import WeatherAPI
 from cms.dispatchers.pmodispatcher import PMODispatcher
+from cms.crisiscalculation.calculation import CrisisCalculator
 
 
 logger = get_task_logger(__name__)
@@ -28,4 +29,13 @@ def pull_apis(self):
     apis = [WeatherAPI(), DengueAPI()]
     for api in apis:
         api.pullUpdate()
+    return 'Success'
+
+
+@task(name="check-for-crisis", bind=True)
+def check_crisis(self):
+    """
+        Background task to periodically pull APIs for weather and dengue
+    """
+    CrisisCalculator().checkCrisis()
     return 'Success'

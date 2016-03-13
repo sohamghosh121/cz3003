@@ -97,6 +97,7 @@ def loginView(request):
                 return redirect('/operator/map')
             elif isAdmin(user):  # login as an admin
                 return redirect('/admin/map')
+            return HttpResponse('ok')
         else:
             # Return a 'disabled account' error message
             return HttpResponse("Disabled account")
@@ -129,11 +130,13 @@ def getDengueInfo(request):
     """
     return JsonResponse(DengueAPI().returnGeoJson(), safe=False)
 
+
 def refreshAPI(request):
     WeatherAPI().pullWeatherUpdate()
     DengueAPI().pullUpdate()
     WeatherAPI().pullPSIUpdate()
     return HttpResponse('ok')
+
 
 def getEventsGeoJSON(request):
     if not isOperator(request.user):
@@ -160,6 +163,7 @@ def getEventsGeoJSON(request):
     data['geojson'] = geojson
     return JsonResponse(data, safe=False)
 
+
 def getEvents(request):
     if not isOperator(request.user):
         return HttpResponseBadRequest()
@@ -181,9 +185,9 @@ def getEventTypeIcon(eventtype):
     elif eventtype == 'terrorist':
         return 'terrorist.png'
 
+
 def getEventType(event):
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
         return 'terrorist'
-
