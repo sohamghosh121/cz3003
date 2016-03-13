@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/base.css' %}">
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+	<title>Crisis Management Sytem - Public View</title>
+</head>
+
+<body>
+	<div id="header" class="navbar-collapse">
+		<a href="/index" style="color:white"><div id="logo_section">
+			Crisis Management System - Public View 
+		</div></a>
+	</div>
+	<div class="nav navbar-nav sidebar col-md-3">
+
+		<ul>
+			{% for tab in tabs %}
+				<li class="{% if tab.is_active %} active {% endif %} "><a href="/{{ tab.url }}"><i class="fa fa-{{tab.icon}}"></i> {{ tab.title }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="col-md-12" id="content">
+		{% block content %}{% endblock content %}
+	</div>
+</body>
