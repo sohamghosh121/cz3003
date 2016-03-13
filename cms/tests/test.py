@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.test import Client
-from cms.models import Admin, Operator, Event, EventTransactionLog, TrafficEvent, TerroristEvent, Reporter
+from cms.models import Admin, Operator, Event, EventTransactionLog, TrafficEvent, TerroristEvent, Reporter, CrisisTransactionLog
 from cms.dispatchers.socialmediadispatcher import SocialMediaDispatcher
 from cms.dispatchers.agencydispatcher import AgencyDispatcher
 from cms.pullapis.weather import WeatherAPI
@@ -20,10 +20,6 @@ testEvent = {
     'location': Point(103.8, 1.36)
 }
 
-testTrafficEvent = {
-
-}
-
 
 testReporter = {
     'name': 'Tester',
@@ -35,6 +31,7 @@ testReporter = {
 def createNewEvent():
     usr, created = User.objects.get_or_create(
         username='test', password='testpassword', email='test@test.com')
+    usr.save()
     op = Operator.objects.create(user_ptr_id=usr.id, name='Test Operator')
     rep = Reporter.objects.create(**testReporter)
     ev = testEvent
@@ -54,28 +51,52 @@ class EventsTest(TestCase):
         pass
 
 
-class DispatcherTest(TestCase):
+class AgencyDispatcherTest(TestCase):
 
     def setUp(self):
-        self.event1, self.log1 = createNewEvent()
-        # self.event2, self.log2 = createNewEvent()
+        self.event, self.log = createNewEvent()
+
+    def test_agency_message_traffic(self):
         self.traffic_event = TrafficEvent.objects.create(
-            event=self.event1, num_vehicles=20)
-        # self.terrorist_event = TerroristEvent.objects.create(
-        #     event=self.event2, num_hostiles=20, attack_type='BMB')
-
-    def test_agency_message(self):
+            event=self.event, num_vehicles=20)
         self.assertEqual(
-            AgencyDispatcher(self.log1).constructMessage(), 'New traffic incident at 1.360000, 103.800000: 10 casualties and 5 injuries.')
-        # self.assertEqual(
-        # AgencyDispatcher(self.log2).constructMessage(), 'New terrorist attack
-        # incident at 1.36, 103.8, 10 casualties and 5 injured')
+            AgencyDispatcher(self.log).constructMessage(), 'New traffic incident at 1.360000, 103.800000: 10 casualties and 5 injuries.')
+        self.traffic_event.delete()
 
-    def test_agency_subscribers(self):
+    def test_agency_message_terrorist(self):
+        self.terrorist_event = TerroristEvent.objects.create(
+            event=self.event, num_hostiles=20, attack_type='BMB')
         self.assertEqual(
-            AgencyDispatcher(self.log1).getAgencySubscribers(), ['+6597741853'])
-        # self.assertEqual(AgencyDispatcher(
-        #     self.log2).getAgencySubscribers(), ['+6597741853', '+6587198478'])
+            AgencyDispatcher(self.log).constructMessage(), 'New terrorist attack incident at 1.360000, 103.800000: 10 casualties and 5 injuries.')
+
+    def test_agency_subscribers_traffic(self):
+        self.traffic_event = TrafficEvent.objects.create(
+            event=self.event, num_vehicles=20)
+        self.assertEqual(
+            AgencyDispatcher(self.log).getAgencySubscribers(), ['+6597741853'])
+        self.traffic_event.delete()
+
+    def test_agency_subscribers_terrorist(self):
+        self.terrorist_event = TerroristEvent.objects.create(
+            event=self.event, num_hostiles=20, attack_type='BMB')
+        self.assertEqual(AgencyDispatcher(
+            self.log).getAgencySubscribers(), ['+6597741853', '+6587198478'])
+        self.terrorist_event.delete()
+
+
+class SocialDispatcherTest(TestCase):
+
+    def setUp(self):
+        self.usr, created = User.objects.get_or_create(
+            username='test', password='testpassword', email='test@test.com')
+        self.adm = Admin.objects.create(
+            user_ptr_id=self.usr.id, name='Test Admin')
+        self.crisisLog = CrisisTransactionLog.objects.create(
+            new_crisis=4, admin=self.adm, district='Bishan')
+
+    def test_social_dispatcher_message(self):
+        self.assertEqual(SocialMediaDispatcher(self.crisisLog).constructMessage(
+        ), 'Crisis level in Bishan has been changed to Level 4. Please take care.')
 
 
 class PullAPITest(TestCase):
@@ -84,13 +105,11 @@ class PullAPITest(TestCase):
         pass
 
     def test_pull_weather(self):
-        self.assertTrue(True)
-        # self.assertTrue(WeatherAPI().pullPSIUpdate())
-        # self.assertTrue(WeatherAPI().pullWeatherUpdate())
+        self.assertTrue(WeatherAPI().pullPSIUpdate())
+        self.assertTrue(WeatherAPI().pullWeatherUpdate())
 
     def test_pull_dengue(self):
-        self.assertTrue(True)
-        # self.assertTrue(DengueAPI().pullUpdate())
+        self.assertTrue(DengueAPI().pullUpdate())
 
 
 class PushAPITest(TestCase):
@@ -99,26 +118,22 @@ class PushAPITest(TestCase):
         pass
 
     def test_fb_update(self):
-        self.assertTrue(True)
-        # randomizeUpdate = random.randint(1, 10000)
-        # self.assertTrue(
-        # FacebookAPI().pushUpdate('System Test %d #ignorethis' %
-        # randomizeUpdate))
+        randomizeUpdate = random.randint(1, 10000)
+        self.assertTrue(
+            FacebookAPI().pushUpdate('System Test %d #ignorethis' %
+                                     randomizeUpdate))
 
     def test_twitter_update(self):
-        self.assertTrue(True)
-        # import random
-        # randomizeUpdate = random.randint(1, 10000)
-        # self.assertTrue(
-        # TwitterAPI().pushUpdate('System Test %d #ignorethis' %
-        # randomizeUpdate))
+        import random
+        randomizeUpdate = random.randint(1, 10000)
+        self.assertTrue(
+            TwitterAPI().pushUpdate('System Test %d #ignorethis' %
+                                    randomizeUpdate))
 
     def test_email_update(self):
-        self.assertTrue(True)
-        # self.assertTrue(EmailAPI().pushUpdate(
-        #     'ghosh.soham@gmail.com', 'System Test', 'System Test #ignorethis'))
+        self.assertTrue(EmailAPI().pushUpdate(
+            'ghosh.soham@gmail.com', 'System Test', 'System Test #ignorethis'))
 
     def test_sms_update(self):
-        self.assertTrue(True)
-        # self.assertTrue(
-        #     TwilioAPI().pushUpdate('System Test #ignorethis', '+6597741853'))
+        self.assertTrue(
+            TwilioAPI().pushUpdate('System Test #ignorethis', '+6597741853'))
