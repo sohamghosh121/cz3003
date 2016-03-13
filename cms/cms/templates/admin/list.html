@@ -92,7 +92,7 @@
 }
 </style>
 
-<div class="row events-container traffic-events">
+<div class="row events-container traffic-events" id = 'trafficList'>
 	<span class="table-label"> Traffic events:</span>
 	<table class="events-table">
 		<thead>
@@ -125,7 +125,7 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}
 						<img src="{% static 'img/caraccident.png' %}" class="details-img"/>{{event.num_vehicles}}
 					</td> 
-					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <a class="fa fa-toggle-on fa-2x  edit-controls" href="deactivateEvent?eventid={{event.event.id}}"></a> </td>
+					<td> <i class="fa fa-remove fa-2x edit-controls" style="color:#D91E18" onclick="deleteEvent({{event.id}}, 'traffic')"></i> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -133,7 +133,7 @@
 </div>
 
 
-<div class="row events-container terrorist-events">
+<div class="row events-container terrorist-events" id = 'terroristList'>
 	<span class="table-label"> Terrorist events: </span>
 	<table class="events-table">
 		<thead>
@@ -166,7 +166,7 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/> {{event.event.num_injured}}
 						<img src="{% static 'img/terrorist.png' %}" class="details-img"/> {{event.num_hostiles}}
 					</td> 
-					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <a class="fa fa-toggle-on fa-2x edit-controls"></a>  </td>
+					<td> <i class="fa fa-remove fa-2x edit-controls" style="color:#D91E18"  onclick="deleteEvent({{event.id}}, 'terrorist')"></i> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -200,17 +200,21 @@ function populateForm(event){
 
 }
 
-function editEvent(eventid, eventtype){
-	$.ajax({
-    		url: 'getEventUpdateForm',
-    		data: {'eventid': eventid, 'eventtype': eventtype},
-    		dataType: 'html'
-    	}).done(function(data, textStatus, jqXHR) {
-    		$('.modal-body').html(data);
-            $('#form-modal').modal();
-    	}).fail(function(){
-    		console.log('failed'); // some proper failure message
-    	});
+function deleteEvent(eventid, eventtype){
+	var w = confirm('Confirm Delete Event?');
+	if (w == false) {
+		return;
+	} else {
+		$.ajax({
+	    		url: 'deleteEvent',
+	    		data: {'eventid': eventid, 'eventtype': eventtype},
+	    		method: 'GET'
+	    	}).done(function() {
+	    		location.load();
+	    	}).fail(function(){
+	    		console.log('failed'); // some proper failure message
+	    	});
+	}
 }
 
 </script>

@@ -75,7 +75,7 @@ class Event(models.Model):
 
 
 class TrafficEvent(models.Model):
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     num_vehicles = models.IntegerField(default=0)
 
 
@@ -88,13 +88,13 @@ class TerroristEvent(models.Model):
         (BIOCHEMICAL, 'Biochemical'),
         (HOSTAGE, 'Hostage')
     )
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     num_hostiles = models.IntegerField(default=0)
     attack_type = models.CharField(max_length=3, choices=TYPE_CHOICES)
 
 
 class EventTransactionLog(models.Model):
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     transaction_type = models.CharField(
         max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
     operator = models.ForeignKey(Operator, blank=True, null=True)
