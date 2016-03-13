@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter, Haze
 from ..dispatchers.agencydispatcher import AgencyDispatcher
 from tabview import OperatorTabViews
-
+from ..pullapis.dengue import DengueAPI
+from ..pullapis.weather import WeatherAPI
 
 def healthCheck(request):
     return HttpResponse('It\'s all good! Operator UI works :)')
@@ -244,3 +245,9 @@ def getEventsGeoJSON(request):
 
 def pull_weather(request):
     return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
+
+def refreshAPI(request):
+    WeatherAPI().pullWeatherUpdate()
+    DengueAPI().pullUpdate()
+    WeatherAPI().pullPSIUpdate()
+    return HttpResponse('ok')

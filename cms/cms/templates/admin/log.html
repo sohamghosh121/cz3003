@@ -3,7 +3,6 @@
 
 {% block content %}
 {% load staticfiles %}
-
 <style>
 	table a:link {
 	  color: #666;
@@ -45,13 +44,13 @@
 		padding:21px 25px 22px 25px;
 		border-top:1px solid #fafafa;
 		border-bottom:1px solid #e0e0e0;
-
+		text-align: center;
 		background: #ededed;
 		background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
 		background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
 	}
 	table th:first-child {
-		text-align: left;
+		text-align: center;
 		padding-left:20px;
 	}
 	table tr:first-child th:first-child {
@@ -135,8 +134,8 @@
 		<tr>
 			<th>Event Type</th>
 			<th>Location</th>
-			<th>Transaction Type</th>
-			<th>Description</th>
+			<th>Log Type</th>
+			<th>Changes Made</th>
 			<th>Operator/Admin</th>
 		</tr>
 	</thead>

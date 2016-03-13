@@ -65,7 +65,7 @@
     <span class="filter-option haze-filter-option"> Show Haze <input type="checkbox" name="filter" value="haze" checked /> </span>
     <span class="filter-option"> Show Traffic Events <input type="checkbox" name="filter" value="traffic" checked /> </span>
     <span class="filter-option"> Show Terrorist Events <input type="checkbox" name="filter" value="terrorist" checked /> </span>
-
+    <button style = "vertical-align: middle;" id = "refreshAPI"><i class="fa fa-refresh fa-2x"></i></button>
 </div>
 
 <div id="map">
@@ -242,6 +242,15 @@
             $('#haze').toggle();
         });
     }
+    $(document).ready(function(){
+        $('#refreshAPI').click(function() {
+             $.ajax({
+                url: 'refreshAPI',
+            }).done (function() {
+                location.reload();
+            })
+        });
+    });
 
 </script>
 
