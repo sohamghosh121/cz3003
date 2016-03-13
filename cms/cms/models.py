@@ -4,12 +4,22 @@ from django.contrib.auth.models import User
 
 
 class Weather(gismodels.Model):
+
+    """
+        Caches information pulled from weather API
+            - weather condition
+    """
     districtname = models.CharField(max_length=128, primary_key=True)
     location = gismodels.PointField()
     condition = models.CharField(max_length=2, blank=True)
 
 
 class Haze(gismodels.Model):
+
+    """
+        Caches information pulled from weather API
+            - haze conditions
+    """
     districtname = models.CharField(max_length=128, primary_key=True)
     location = gismodels.PointField()
     PSI = models.IntegerField(default=0)
@@ -18,6 +28,11 @@ class Haze(gismodels.Model):
 
 
 class Dengue(models.Model):
+
+    """
+        Caches information pulled from dengue API
+            - dengue hotspots
+    """
     gid = models.AutoField(primary_key=True)
     objectid = models.IntegerField(blank=True, null=True)
     locality = models.CharField(max_length=254, blank=True, null=True)
@@ -36,20 +51,45 @@ class Dengue(models.Model):
 
 
 class Operator(User):
+
+    """
+        User with operator priviledges
+    """
     name = models.CharField(max_length=256, default='')
 
 
 class Admin(User):
+
+    """
+        User with admin priviledges
+    """
     name = models.CharField(max_length=256, default='')
 
 
 class Reporter(models.Model):
+
+    """
+        Stores information related to person reporting incident
+    """
     name = models.CharField(max_length=128, default='')
     identification = models.CharField(max_length=10, primary_key=True)
     contact_number = models.CharField(max_length=8, blank=True)
 
 
 class Event(models.Model):
+
+    """
+        Event superclass model. Contains:
+            - operators who have created/edited it
+            - first person to report
+            - other people who have reported this incident
+            - is the event active?
+            - text description of event
+            - number of casualties
+            - number of injured people
+            - location of event
+            - what sort of assistance is required (not used now ....)
+    """
     AMBULANCE = 'AMB'
     RESCUE = 'RES'
     EVACUATION = 'EVA'
@@ -75,11 +115,22 @@ class Event(models.Model):
 
 
 class TrafficEvent(models.Model):
+
+    """
+        Traffic event subclass
+            - Number of vehicles affected by incident
+    """
     event = models.ForeignKey(Event)
     num_vehicles = models.IntegerField(default=0)
 
 
 class TerroristEvent(models.Model):
+
+    """
+        Terrorist event subclass
+            - Number of hostiles
+            - Type of terrorist attack
+    """
     BOMB = 'BMB'
     BIOCHEMICAL = 'BCH'
     HOSTAGE = 'HST'
@@ -94,6 +145,15 @@ class TerroristEvent(models.Model):
 
 
 class EventTransactionLog(models.Model):
+
+    """
+        Stores transaction log of operations on events.
+            - Operator who edited/created event (null if not an operator)
+            - Admin who edited/created event (null if not an admin)
+            - Description of change
+                e.g. UPDATE num_casualties
+            - Date of transaction (made to be auto now)
+    """
     event = models.ForeignKey(Event)
     transaction_type = models.CharField(
         max_length=2, choices=(('ED', 'Edit'), ('CR', 'Create'), ('DL', 'Delete')))
@@ -103,7 +163,12 @@ class EventTransactionLog(models.Model):
     desc = models.CharField(max_length=1024, blank=True)
     date_transaction = models.DateTimeField(auto_now=True)
 
+
 class Singapore(models.Model):
+
+    """
+        Contains GeoSpatial information on Singapore districts
+    """
     gid = models.AutoField(primary_key=True)
     id_0 = models.DecimalField(
         max_digits=10, decimal_places=0, blank=True, null=True)
@@ -121,18 +186,30 @@ class Singapore(models.Model):
     nl_name_1 = models.CharField(max_length=50, blank=True, null=True)
     varname_1 = models.CharField(max_length=150, blank=True, null=True)
     geom = gismodels.GeometryField(blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'cms_singapore'
 
+
 class Districts(models.Model):
-    district = models.CharField(max_length=10, primary_key= True)
-    crisis = models.PositiveSmallIntegerField(default = 0)
+
+    """
+        Contains crisis level information for the Singapore districts
+    """
+    district = models.CharField(max_length=10, primary_key=True)
+    crisis = models.PositiveSmallIntegerField(default=0)
     center = gismodels.PointField(blank=True, null=True)
 
+
 class CrisisTransactionLog(models.Model):
+
+    """
+        Crisis transaction log which records when the crisis level is raised or decreased by an admin
+            - new crisis level
+            - admin account that made the change
+    """
     new_crisis = models.PositiveSmallIntegerField()
     admin = models.ForeignKey(Admin, blank=True, null=True)
     district = models.CharField(max_length=10)
     date_recorded = models.DateTimeField(auto_now=True)
-

@@ -32,6 +32,7 @@ def deactivateEvent(request):
         operator=operator,
         desc='DEACTIVATE event')
     eventlog.save()
+    AgencyDispatcher(eventlog).dispatch()
     return redirect('/operator/list')
 
 
@@ -75,7 +76,6 @@ def updateEvent(request):
             edit_string.append('UPDATE description')
         event.event.save()
         event.save()
-        AgencyDispatcher(event, 'EDIT').dispatch()  # dispatch to agencies
         operator = Operator.objects.get(user_ptr_id=request.user.id)
         if operator not in event.event.operator.all():
             event.event.operator.add(operator)
@@ -88,6 +88,7 @@ def updateEvent(request):
             reporter=reporter,
             desc=','.join(edit_string))
         eventlog.save()
+        AgencyDispatcher(eventlog).dispatch()  # dispatch to agencies
         return redirect('/operator/list')
     else:
         return HttpResponseBadRequest()
@@ -146,7 +147,7 @@ def newEvent(request):
             else:
                 return HttpResponseBadRequest('nnok')
             newEvent.save()
-            AgencyDispatcher(newEvent, 'NEW').dispatch()
+            AgencyDispatcher(eventlog).dispatch()
             return HttpResponse('ok')
         return HttpResponseBadRequest('nok')
 
