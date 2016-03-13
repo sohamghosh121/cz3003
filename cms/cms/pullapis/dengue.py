@@ -37,7 +37,7 @@ class DengueAPI(PullAPI):
         try:
             zip = zipfile.ZipFile(zippedfile)
             zip.extractall(extractLocation)
-            os.remove(zippedfile)
+            # os.remove(zippedfile)
             return True
         except (zipfile.BadZipfile):
             print "error with zipfile"
@@ -57,6 +57,7 @@ class DengueAPI(PullAPI):
         return False
 
     def returnGeoJson(self):
+        self.pullUpdate()
         dengue = Dengue.objects.all()
         denguejson = json.loads(serialize('geojson', dengue))
         for x in denguejson['features']:
