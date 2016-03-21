@@ -62,14 +62,14 @@ function displayCrisis(data){
 }
 
 $.ajax( {
-	url: 'getCrisisInfo',
+	url: 'get_crisis_info',
 	dataType: 'json'
 }).done(function (data) {
 	displayCrisis(data);
 });
 
 $.ajax({
-	url: 'getTrafficInfo',
+	url: 'get_traffic_info',
 	data: {},
 	dataType: 'json'
 }).done(function (data) {
@@ -77,7 +77,7 @@ $.ajax({
 });
 
 $.ajax({
-	url: 'getTerroristInfo',
+	url: 'get_terrorist_info',
 	data: {},
 	dataType: 'json'
 }).done(function (data) {

@@ -8,13 +8,13 @@ class SocialMediaDispatcher:
         Dispatcher for public information to Social Media platforms
     """
 
-    def __init__(self, crisisUpdate):
+    def __init__(self, crisis_update):
         """
             Initiate class with crisis update log object
         """
-        self.update = crisisUpdate
+        self.update = crisis_update
 
-    def constructMessage(self):
+    def construct_message(self):
         """
             Construct message to update public based on crisis update
         """
@@ -24,7 +24,7 @@ class SocialMediaDispatcher:
         """
                 Construct update message and dispatch to social media platforms
         """
-        message = constructMessage()
-        FacebookAPI().pushUpdate(message)
-        TwitterAPI().pushUpdate(message)
+        message = construct_message()
+        FacebookAPI().push_update(message)
+        TwitterAPI().push_update(message)
         pass

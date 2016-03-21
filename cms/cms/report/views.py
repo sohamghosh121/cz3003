@@ -8,48 +8,48 @@ import time
 import requests
 
 
-def getTrafficInfo(request):
-    trafficEvents = TrafficEvent.objects.all()
+def get_traffic_info(request):
+    traffic_events = TrafficEvent.objects.all()
     response = {}
-    numVehicles = 0
-    numCasualties = 0
-    numInjuries = 0
-    for trafficEvent in trafficEvents:
-        event = trafficEvent.event
-        numVehicles += trafficEvent.num_vehicles
-        numCasualties += event.num_casualties
-        numInjuries += event.num_injured
-    response['numTraffics'] = len(trafficEvents)
-    response['numVehicles'] = numVehicles
-    response['numCasualties'] = numCasualties
-    response['numInjuries'] = numInjuries
+    num_vehicles = 0
+    num_casualties = 0
+    num_injuries = 0
+    for traffic_event in traffic_events:
+        event = traffic_event.event
+        num_vehicles += traffic_event.num_vehicles
+        num_casualties += event.num_casualties
+        num_injuries += event.num_injured
+    response['numTraffics'] = len(traffic_events)
+    response['numVehicles'] = num_vehicles
+    response['numCasualties'] = num_casualties
+    response['numInjuries'] = num_injuries
 
     return JsonResponse(response, safe=False)
 
 
-def getTerroristInfo(request):
-    terroristEvents = TerroristEvent.objects.all()
+def get_terrorist_info(request):
+    terrorist_events = TerroristEvent.objects.all()
     response = {}
-    numHostiles = 0
-    numCasualties = 0
-    numInjuries = 0
-    attackTypes = ""
-    for terroristEvent in terroristEvents:
-        event = terroristEvent.event
-        numHostiles += terroristEvent.num_hostiles
-        numCasualties += event.num_casualties
-        numInjuries += event.num_injured
-        attackTypes += terroristEvent.attack_type +','
+    num_hostiles = 0
+    num_casualties = 0
+    num_injuries = 0
+    attack_types = ""
+    for terrorist_event in terrorist_events:
+        event = terrorist_event.event
+        num_hostiles += terrorist_event.num_hostiles
+        num_casualties += event.num_casualties
+        num_injuries += event.num_injured
+        attack_types += terrorist_event.attack_type +','
 
-    response['numAttacks'] = len(terroristEvents)
-    response['numHostiles'] = numHostiles
-    response['numCasualties'] = numCasualties
-    response['numInjuries'] = numInjuries
-    response['attackTypes'] = attackTypes
+    response['numAttacks'] = len(terrorist_events)
+    response['numHostiles'] = num_hostiles
+    response['numCasualties'] = num_casualties
+    response['numInjuries'] = num_injuries
+    response['attackTypes'] = attack_types
 
     return JsonResponse(response, safe=False)
 
-def getCrisisInfo(request):
+def get_crisis_info(request):
     districts = Districts.objects.all()
     response = {}
     for d in districts:
@@ -57,7 +57,7 @@ def getCrisisInfo(request):
     return JsonResponse(response, safe=False)
 
 
-def getMapImage(request):
+def get_map_image(request):
     try:
         print 'capturing screenshots'
         # browser = webdriver.Firefox()

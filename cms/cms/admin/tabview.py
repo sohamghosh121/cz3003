@@ -1,7 +1,5 @@
 from ..tabview import TabView, TabViews, MapView, ListView
 
-
-
 class AdminLogView(TabView):
     tab_id = 'log'
     url = 'admin/log'

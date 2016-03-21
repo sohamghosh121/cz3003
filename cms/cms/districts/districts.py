@@ -18,7 +18,7 @@ class DistrictManager():
     WEST_CENTER = Point(1.3668943, 103.7071299)
     CENTRAL_CENTER = Point(1.2903924, 103.8242863)
 
-    def importDistricts(self):
+    def import_districts(self):
         """ imports districts of Singapore into database"""
         command_to_run = "shp2pgsql -d -W LATIN1 %s cms_singapore | psql -d cms" % self.DISTRICT_SHP_FILENAME
         os.system(command_to_run)
@@ -37,7 +37,7 @@ class DistrictManager():
                 d.center = self.CENTRAL_CENTER
             d.save()
 
-    def returnGeoJson(self):
+    def return_geo_json(self):
         """ 
             returns GeoJsonData for district boundaries
         """
@@ -59,7 +59,7 @@ class CrisisManager ():
         Handle changing of crisis levels and crisis log
     """
 
-    def setCrisisLevel(self, district_to_set, crisis_to_set, admin):
+    def set_crisis_level(self, district_to_set, crisis_to_set, admin):
         """
             Sets crisis level of a specified district and add to log
         """
@@ -71,7 +71,7 @@ class CrisisManager ():
             district=district_to_set, new_crisis=crisis_to_set)
         log.save()
 
-    def returnGeoJson(self):
+    def return_geo_json(self):
         """ 
                 returns GeoJsonData for district boundaries
         """
@@ -93,7 +93,7 @@ class CrisisManager ():
             Handle changing of crisis levels and crisis log
     """
 
-    def setCrisisLevel(self, district_to_set, crisis_to_set, admin):
+    def set_crisis_level(self, district_to_set, crisis_to_set, admin):
         """
                 Sets crisis level of a specified district and add to log
         """

@@ -202,7 +202,7 @@ function populateForm(event){
 
 function editEvent(eventid, eventtype){
 	$.ajax({
-    		url: 'getEventUpdateForm',
+    		url: 'get_event_update_form',
     		data: {'eventid': eventid, 'eventtype': eventtype},
     		dataType: 'html'
     	}).done(function(data, textStatus, jqXHR) {

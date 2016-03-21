@@ -57,7 +57,6 @@ class Operator(User):
     """
     name = models.CharField(max_length=256, default='')
 
-
 class Admin(User):
 
     """

@@ -10,7 +10,7 @@ class TwitterAPI:
     ACCESS_TOKEN = '708263718585372672-DoPcGuN849xdwPmIaYjAknYDsAA3iVF'
     ACCESS_SECRET = 'OtnBKub9qERxOLIfqswkAYSPJ7j2R9V3kLhaUzjSkL7dD'
 
-    def pushUpdate(self, tweet):
+    def push_update(self, tweet):
         try:
             api = self.get_api({
                 "consumer_key": self.API_KEY,

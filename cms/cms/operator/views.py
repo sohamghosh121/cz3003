@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from ..views import renderTabView, isOperator, isAdmin
+from ..views import render_tab_view, is_operator, is_admin
 from django.shortcuts import render, redirect
 from django.contrib.gis.geos import Point
 from django.contrib.auth.decorators import login_required
@@ -9,41 +9,41 @@ from tabview import OperatorTabViews
 from ..pullapis.dengue import DengueAPI
 from ..pullapis.weather import WeatherAPI
 
-def healthCheck(request):
-    return HttpResponse('It\'s all good! Operator UI works :)')
+# def healthCheck(request):
+#     return HttpResponse('It\'s all good! Operator UI works :)')
 
 
-def latLngToPoint(stringobj):
-    lat, lng = stringobj.split(',')
+def lat_lng_to_point(string_obj):
+    lat, lng = string_obj.split(',')
     return Point(float(lng), float(lat))
 
 
 @login_required
-def deactivateEvent(request):
-    if not isOperator(request.user):
+def deactivate_event(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
-    eventid = request.GET.get('eventid')
-    e = Event.objects.get(id=eventid)
-    e.isactive = False
+    event_id = request.GET.get('eventid')
+    e = Event.objects.get(id=event_id)
+    e.is_active = False
     e.save()
     operator = Operator.objects.get(user_ptr_id=request.user.id)
-    eventlog = EventTransactionLog.objects.create(
+    event_log = EventTransactionLog.objects.create(
         event=e,
         transaction_type='ED',
         operator=operator,
         desc='DEACTIVATE event')
-    eventlog.save()
-    AgencyDispatcher(eventlog).dispatch()
+    event_log.save()
+    AgencyDispatcher(event_log).dispatch()
     return redirect('/operator/list')
 
 
 @login_required
-def updateEvent(request):
-    if not isOperator(request.user):
+def update_event(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
     if request.method == 'POST':
         reporter = {}
-        eventtype = request.POST.get('eventtype')
+        event_type = request.POST.get('eventtype')
         event_id = request.POST.get('eventid')
         reporter['identification'] = request.POST.get('identification')
         try:
@@ -56,12 +56,12 @@ def updateEvent(request):
                 **reporter)
             reporter.save()
         edit_string = []
-        if eventtype == 'traffic':
+        if event_type == 'traffic':
             event = TrafficEvent.objects.get(id=event_id)
             if event.num_vehicles != int(request.POST.get('numVehicles')):
                 event.num_vehicles = int(request.POST.get('numVehicles'))
                 edit_string.append('UPDATE num_vehicles')
-        elif eventtype == 'terrorist':
+        elif event_type == 'terrorist':
             event = TerroristEvent.objects.get(id=event_id)
             if event.num_hostiles != int(request.POST.get('numHostiles')):
                 event.num_hostiles = int(request.POST.get('numHostiles'))
@@ -82,22 +82,22 @@ def updateEvent(request):
             event.event.operator.add(operator)
         if reporter not in event.event.reporters.all() or reporter != event.event.first_responder:
             event.event.reporters.add(reporter)
-        eventlog = EventTransactionLog.objects.create(
+        event_log = EventTransactionLog.objects.create(
             event=event.event,
             transaction_type='ED',
             operator=operator,
             reporter=reporter,
             desc=','.join(edit_string))
-        eventlog.save()
-        AgencyDispatcher(eventlog).dispatch()  # dispatch to agencies
+        event_log.save()
+        AgencyDispatcher(event_log).dispatch()  # dispatch to agencies
         return redirect('/operator/list')
     else:
         return HttpResponseBadRequest()
 
 
 @login_required
-def newEvent(request):
-    if not isOperator(request.user):
+def new_event(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
     if request.method == 'GET':
         tabs = OperatorTabViews()
@@ -105,84 +105,84 @@ def newEvent(request):
         data = {
             'eventtypes': enumerate(['Traffic Event', 'Terrorist Event'])
         }
-        return renderTabView(request, tabs, data)
+        return render_tab_view(request, tabs, data)
     elif request.method == 'POST':
-        eventDetails = {}
+        event_details = {}
         reporter = {}
-        eventtype = request.POST.get('eventtype')
+        event_type = request.POST.get('eventtype')
         reporter['identification'] = request.POST.get('identification')
         try:
-            eventDetails['first_responder'] = Reporter.objects.get(
+            event_details['first_responder'] = Reporter.objects.get(
                 identification=reporter['identification'])
         except Reporter.DoesNotExist:
             reporter['name'] = request.POST.get('name')
             reporter['contact_number'] = request.POST.get('contact')
-            eventDetails['first_responder'] = Reporter.objects.create(
+            event_details['first_responder'] = Reporter.objects.create(
                 **reporter)
-            eventDetails['first_responder'] .save()
+            event_details['first_responder'] .save()
 
         operator = Operator.objects.get(user_ptr_id=request.user.id)
-        eventDetails['description'] = request.POST.get('description')
-        eventDetails['num_casualties'] = int(request.POST.get('numCasualties'))
-        eventDetails['num_injured'] = int(request.POST.get('numInjured'))
-        eventDetails['location'] = latLngToPoint(request.POST.get('location'))
-        event = Event.objects.create(**eventDetails)
+        event_details['description'] = request.POST.get('description')
+        event_details['num_casualties'] = int(request.POST.get('numCasualties'))
+        event_details['num_injured'] = int(request.POST.get('numInjured'))
+        event_details['location'] = lat_lng_to_point(request.POST.get('location'))
+        event = Event.objects.create(**event_details)
         event.save()
         event.operator.add(operator)
 
-        eventlog = EventTransactionLog.objects.create(
+        event_log = EventTransactionLog.objects.create(
             event=event, transaction_type='CR', operator=operator)  # add the operator in later
-        eventlog.save()
-        if eventtype:
-            specificEventDetails = {'event': event}
-            if eventtype == 'traffic':
-                specificEventDetails['num_vehicles'] = int(
+        event_log.save()
+        if event_type:
+            specific_event_details = {'event': event}
+            if event_type == 'traffic':
+                specific_event_details['num_vehicles'] = int(
                     request.POST.get('numVehicles'))
-                newEvent = TrafficEvent.objects.create(**specificEventDetails)
-            elif eventtype == 'terrorist':
-                specificEventDetails['num_hostiles'] = int(
+                new_event = TrafficEvent.objects.create(**specific_event_details)
+            elif event_type == 'terrorist':
+                specific_event_details['num_hostiles'] = int(
                     request.POST.get('numHostiles'))
-                specificEventDetails[
+                specific_event_details[
                     'attack_type'] = request.POST.get('attacktype')
-                newEvent = TerroristEvent.objects.create(**specificEventDetails)
+                new_event = TerroristEvent.objects.create(**specific_event_details)
             else:
                 return HttpResponseBadRequest('nnok')
-            newEvent.save()
-            AgencyDispatcher(eventlog).dispatch()
+            new_event.save()
+            AgencyDispatcher(event_log).dispatch()
             return redirect('/operator/list')
         return HttpResponseBadRequest('nok')
 
 
 @login_required
-def listEvents(request):
-    if not isOperator(request.user):
+def list_events(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('list')
-    return renderTabView(request, tabs, {
-        'trafficevents': TrafficEvent.objects.filter(event__isactive=True),
-        'terroristevents': TerroristEvent.objects.filter(event__isactive=True)
+    return render_tab_view(request, tabs, {
+        'traffic_events': TrafficEvent.objects.filter(event__isactive=True),
+        'terrorist_events': TerroristEvent.objects.filter(event__isactive=True)
     })
 
 
 # @login_required
-def mapEvents(request):
+def map_events(request):
     # if not isOperator(request.user):
     #     return HttpResponseBadRequest()
     tabs = OperatorTabViews()
     tabs.set_active_tab('map')
-    return renderTabView(request, tabs, {'haze': Haze.objects.all()})
+    return render_tab_view(request, tabs, {'haze': Haze.objects.all()})
 
 
-def getEventType(event):
+def get_event_type(event):
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
         return 'terrorist'
 
 
-def getEventUpdateForm(request):
-    if not isOperator(request.user):
+def get_event_update_form(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
     context = {}
     event_id = request.GET.get('eventid')
@@ -196,14 +196,14 @@ def getEventUpdateForm(request):
     return render(request, 'operator/updateEventForm.html', context)
 
 
-def getEvents(request):
-    if not isOperator(request.user):
+def get_events(request):
+    if not is_operator(request.user):
         return HttpResponseBadRequest()
     events_list = []
     events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
     events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
     events_list = [{
-        'type': getEventType(e),
+        'type': get_event_type(e),
         'details': e
     }
         for e in sorted(events_list, key=lambda x: x.event.date_recorded, reverse=True)
@@ -211,13 +211,13 @@ def getEvents(request):
     return events_list
 
 
-def getEventTypeIcon(eventtype):
-    if eventtype == 'traffic':
+def get_event_type_icon(event_type):
+    if event_type == 'traffic':
         return 'caraccident.png'
-    elif eventtype == 'terrorist':
+    elif event_type == 'terrorist':
         return 'terrorist.png'
 
-def getEventsGeoJSON(request):
+def get_events_geo_JSON(request):
     # if not isOperator(request.user):
     #     return HttpResponseBadRequest()
     data = {}
@@ -244,10 +244,10 @@ def getEventsGeoJSON(request):
 
 
 def pull_weather(request):
-    return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
+    return JsonResponse(WeatherAPI().return_geo_json(), safe=False)
 
-def refreshAPI(request):
-    WeatherAPI().pullWeatherUpdate()
-    DengueAPI().pullUpdate()
-    WeatherAPI().pullPSIUpdate()
+def refresh_API(request):
+    WeatherAPI().pull_weather_update()
+    DengueAPI().pull_update()
+    WeatherAPI().pull_PSI_update()
     return HttpResponse('ok')

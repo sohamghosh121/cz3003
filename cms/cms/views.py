@@ -15,7 +15,7 @@ import os
 from tabview import TabViews
 
 
-def isUserType(user, usercls):
+def is_user_type(user, usercls):
     """
         Check if user is of usercls type
     """
@@ -26,38 +26,38 @@ def isUserType(user, usercls):
         return False
 
 
-def isOperator(user):
+def is_operator(user):
     """
         Check if user is operator
     """
-    return isUserType(user, Operator)
+    return is_user_type(user, Operator)
 
 
-def isAdmin(user):
+def is_admin(user):
     """
         Check if user is admin
     """
-    return isUserType(user, Admin)
+    return is_user_type(user, Admin)
 
 
-def healthCheck(request):
-    return HttpResponse('It\'s all good!')
+# def healthCheck(request):
+#     return HttpResponse('It\'s all good!')
 
 
-def getUserType(request):
+def get_user_type(request):
     """
         Get user type if authenticated. If not, user is public.
     """
     if request.user.is_authenticated():
-        if isAdmin(request.user):
+        if is_admin(request.user):
             return 'Admin'
-        elif isOperator(request.user):
+        elif is_operator(request.user):
             return 'Operator'
     else:
         return 'Public'
 
 
-def renderTabView(request, tabs, data={}):
+def render_tab_view(request, tabs, data={}):
     """
         Wrapper method for rendering tab view
     """
@@ -66,24 +66,24 @@ def renderTabView(request, tabs, data={}):
         return render(request, active_tab.template,
                       {'title': active_tab.title,
                        'data': data,
-                       'usertype': getUserType(request),
+                       'usertype': get_user_type(request),
                        'tabs': tabs.tabs})
     else:
         return HttpResponse('ERROR')
 
 
-def registerOperator(request, username, email, password):
+def register_operator(request, username, email, password):
     """
         Method to create Operator
     """
-    if not isOperator(Operator.objects.all(), username):
-        newOperator = Operator.objects.create_user(username, email, password)
-        newOperator.save()
+    if not is_operator(Operator.objects.all(), username):
+        new_operator = Operator.objects.create_user(username, email, password)
+        new_operator.save()
         return HttpResponse("Operator created!")
     return HttpResponse("Operator existed!")
 
 
-def loginView(request):
+def login_view(request):
     """
         View function to process login
     """
@@ -93,9 +93,9 @@ def loginView(request):
     if user is not None:
         if user.is_active:
             dologin(request, user)
-            if isOperator(user):  # login as an operator
+            if is_operator(user):  # login as an operator
                 return redirect('/operator/map')
-            elif isAdmin(user):  # login as an admin
+            elif is_admin(user):  # login as an admin
                 return redirect('/admin/map')
             return HttpResponse('ok')
         else:
@@ -106,7 +106,7 @@ def loginView(request):
         return HttpResponse("Invalid login")
 
 
-def logoutView(request):
+def logout_view(request):
     """
         Process log out action and redirect to login page
     """
@@ -114,34 +114,34 @@ def logoutView(request):
     return redirect('/login')
 
 
-def getWeatherInfo(request):
+def get_weather_info(request):
     """
         Method to make API call to get GeoJSON Weather data for Google Map. Includes
             - Weather
             - Haze info
     """
-    return JsonResponse(WeatherAPI().returnGeoJson(), safe=False)
+    return JsonResponse(WeatherAPI().return_geo_json(), safe=False)
 
 
-def getDengueInfo(request):
+def get_dengue_info(request):
     """
         Method to make API call to get GeoJSON Dengue data. Includes
             - Dengue hotzones
     """
-    return JsonResponse(DengueAPI().returnGeoJson(), safe=False)
+    return JsonResponse(DengueAPI().return_geo_json(), safe=False)
 
 
 def refreshAPI(request):
-    WeatherAPI().pullWeatherUpdate()
-    DengueAPI().pullUpdate()
-    WeatherAPI().pullPSIUpdate()
+    WeatherAPI().pull_weather_update()
+    DengueAPI().pull_update()
+    WeatherAPI().pull_PSI_update()
     return HttpResponse('ok')
 
 
-def getEventsGeoJSON(request):
+def get_events_geo_JSON(request):
     data = {}
     geojson = {'type': 'FeatureCollection', 'features': []}
-    events = getEvents(request)
+    events = get_events(request)
     geojson['features'] = [{
         'type': 'Feature',
         'geometry': {
@@ -150,7 +150,7 @@ def getEventsGeoJSON(request):
         },
         'properties': {
             'type': event['type'],
-            'icon': getEventTypeIcon(event['type']),
+            'icon': get_event_type_icon(event['type']),
             'event': {
                 'name': event['details'].event.first_responder.name,
                 'description': event['details'].event.description,
@@ -162,12 +162,12 @@ def getEventsGeoJSON(request):
     return JsonResponse(data, safe=False)
 
 
-def getEvents(request):
+def get_events(request):
     events_list = []
     events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
     events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
     events_list = [{
-        'type': getEventType(e),
+        'type': get_event_type(e),
         'details': e
     }
         for e in sorted(events_list, key=lambda x: x.event.date_recorded, reverse=True)
@@ -175,14 +175,14 @@ def getEvents(request):
     return events_list
 
 
-def getEventTypeIcon(eventtype):
+def get_event_type_icon(eventtype):
     if eventtype == 'traffic':
         return 'caraccident.png'
     elif eventtype == 'terrorist':
         return 'terrorist.png'
 
 
-def getEventType(event):
+def get_event_type(event):
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):

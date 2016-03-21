@@ -2,8 +2,8 @@ from django.conf.urls import include, url
 from cms.report import views
 
 urlpatterns = [
-    url(r'^getTrafficInfo', views.getTrafficInfo),
-    url(r'^getTerroristInfo', views.getTerroristInfo),
-    url(r'^getMapImage', views.getMapImage),
-    url(r'^getCrisisInfo', views.getCrisisInfo)
+    url(r'^get_traffic_info', views.get_traffic_info),
+    url(r'^get_terrorist_info', views.get_terrorist_info),
+    url(r'^get_map_image', views.get_map_image),
+    url(r'^get_crisis_info', views.get_crisis_info)
 ]

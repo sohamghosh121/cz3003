@@ -7,7 +7,7 @@ import facebook
 
 class FacebookAPI:
 
-    def pushUpdate(self, message):
+    def push_update(self, message):
         try:
             page_id = "197027533999861"
             page_access_token = "CAAYtJqL3ZAO8BAA0hzU5NNlNUxZCEgVXubfWTl4oxOgb5IaR9GhKq4DGMHWbFvvfXMLihMd3S8VAPCOtLOsRxX8sg5rAxAcML7aEQyC5r38l7ZCDPSJqRULIxA6lnR6eZBgZCbPZCQo1Nw3MzaJN1KO8s3SfVeGZBAKVUJPFBNNwcfek8PgiHEhg71T8facNmwZD"
@@ -18,3 +18,6 @@ class FacebookAPI:
         except Exception, e:
             print e
             return False
+
+# fb = FacebookAPI()
+# fb.pushUpdate("Testing again")

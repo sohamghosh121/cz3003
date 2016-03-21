@@ -28,7 +28,7 @@ def pull_apis(self):
     """
     apis = [WeatherAPI(), DengueAPI()]
     for api in apis:
-        api.pullUpdate()
+        api.pull_update()
     return 'Success'
 
 
@@ -37,7 +37,7 @@ def check_crisis(self):
     """
         Background task to periodically pull APIs for weather and dengue
     """
-    CrisisCalculator().checkCrisis()
+    CrisisCalculator().check_crisis()
 
 @task(name="save-map-screenshots", bind=True)
 def pull_apis(self):

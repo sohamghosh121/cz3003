@@ -5,6 +5,6 @@ class PullAPI:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def pullUpdate(self):
+    def pull_update(self):
         pass
     	

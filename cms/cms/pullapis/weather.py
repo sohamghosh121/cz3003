@@ -20,7 +20,7 @@ class WeatherAPI(PullAPI):
     PSI_URL = 'http://www.nea.gov.sg/api/WebAPI?dataset=psi_update&keyref=%s' % API_KEY
     PM2_5_URL = 'http://www.nea.gov.sg/api/WebAPI?dataset=pm2.5_update&keyref=%s' % API_KEY
 
-    def pullUpdate(self):
+    def pull_update(self):
         """
                 Pulls Weather info from NEA:
                 Includes
@@ -29,13 +29,13 @@ class WeatherAPI(PullAPI):
                     - PM2.5 Info
         """
         try:
-            w = self.pullWeatherUpdate()
-            p = self.pullPSIUpdate()
+            w = self.pull_weather_update()
+            p = self.pull_PSI_update()
             return w and p
         except:
             return False
 
-    def pullWeatherUpdate(self):
+    def pull_weather_update(self):
         """
             Pulls Nowcast data
         """
@@ -43,12 +43,12 @@ class WeatherAPI(PullAPI):
         if (r.status_code == 200):
             root = ElementTree.fromstring(r.content)
             for area in root.iter('area'):
-                districtname = area.get('name')
+                district_name = area.get('name')
                 lon = float(area.get('lon'))
                 lat = float(area.get('lat'))
                 con = area.get('forecast')
                 w, created = Weather.objects.get_or_create(
-                    districtname=districtname, location=Point(lon, lat))
+                    districtname=district_name, location=Point(lon, lat))
                 w.condition = con
                 w.save()
             return True
@@ -56,7 +56,7 @@ class WeatherAPI(PullAPI):
             print r.status_code
             return False
 
-    def pullPSIUpdate(self):
+    def pull_PSI_update(self):
         """
             Pulls PSI Data
         """
@@ -90,7 +90,7 @@ class WeatherAPI(PullAPI):
             print r.status_code
             return False
 
-    def getNowcastDetails(self, shortForm):
+    def get_nowcast_details(self, short_form):
         """
                 returns long form of nowcast
         """
@@ -128,9 +128,9 @@ class WeatherAPI(PullAPI):
             'WF': ('Windy, Fair', 'windy.png'),
             'WR': ('Windy, Rain', 'rain.png'),
             'WS': ('Windy, Showers' 'shower.png')
-        }[shortForm]
+        }[short_form]
 
-    def returnGeoJson(self):
+    def return_geo_json(self):
         """
                 returns GeoJson Data to be added into map
         """

@@ -206,7 +206,7 @@ function deleteEvent(eventid, eventtype){
 		return;
 	} else {
 		$.ajax({
-	    		url: 'deleteEvent',
+	    		url: 'delete_event',
 	    		data: {'eventid': eventid, 'eventtype': eventtype},
 	    		method: 'GET'
 	    	}).done(function() {

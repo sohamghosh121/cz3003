@@ -9,7 +9,7 @@ class EmailAPI:
     API_KEY = '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'
     client = sendgrid.SendGridClient(API_KEY)
 
-    def pushUpdate(self, email, subject, content, attachment=None):
+    def push_update(self, email, subject, content, attachment=None):
         try:
             message = sendgrid.Mail()
             message.add_to(email)

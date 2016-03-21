@@ -63,7 +63,7 @@
         
         var getDistricts = function() {
             $.ajax({
-                url: '/admin/getDistricts',
+                url: '/admin/get_districts',
                 dataType: 'json'
             }).done(function (data) {
                  map.data.addGeoJson(data);

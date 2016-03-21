@@ -109,7 +109,7 @@
         });
 
         $.ajax({
-    		url: '/getEventsGeoJSON',
+    		url: '/get_events_geo_JSON',
     		data: {},
     		dataType: 'json'
     	}).done(function(data, textStatus, jqXHR) {
@@ -120,7 +120,7 @@
     	});
         
         $.ajax({
-                url: '/getWeatherInfo',
+                url: '/get_weather_info',
                 dataType: 'json'
             }).done(function (data) {
                  weatherGeoJSON = data;
@@ -128,7 +128,7 @@
             });
 
         $.ajax({
-                url: '/getDengueInfo',
+                url: '/get_dengue_info',
                 dataType: 'json'
             }).done(function (data) {
                 dengueGeoJSON = data;
