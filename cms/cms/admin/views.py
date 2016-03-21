@@ -1,3 +1,6 @@
+"""
+    This module acts like an AdminController
+"""
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Singapore, CrisisTransactionLog, Haze
 from tabview import AdminTabViews
@@ -11,6 +14,9 @@ from django.contrib.auth.decorators import login_required
 #     return HttpResponse('It\'s all good! Admin UI works :)')
 
 def get_transaction_log(request):
+    """
+        Get the transaction log from the database
+    """
     tabs = AdminTabViews()
     tabs.set_active_tab('log')
     event_type_dict = {}
@@ -30,6 +36,9 @@ def get_crisis_view(request):
 
 @register.filter(name = 'type')
 def get_event_type(log):
+    """
+        Choose an event type as active tab
+    """
     if (TrafficEvent.objects.filter(event=log.event).exists() == True):
         return 'Traffic'
     if (TerroristEvent.objects.filter(event=log.event).exists() == True):
@@ -38,6 +47,9 @@ def get_event_type(log):
 
 @register.filter (name = 'address')
 def get_address_from_lat_long(latlong):
+    """
+        Take the location address from given lattitude, longitude
+    """
     url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&sensor=false" % (latlong.y,latlong.x)
     r = requests.get(url)
     result = r.json()
@@ -48,10 +60,16 @@ def get_address_from_lat_long(latlong):
 
 @register.filter (name = 'tran')
 def get_long_transaction_type(log):
+    """
+        Display the transaction type
+    """
     return log.get_transaction_type_display()
 
 @register.filter (name = 'adminop')
 def get_admin_or_operator(log):
+    """
+        Choose admin or operator as active tab
+    """
     if log.operator is not None:
         return log.operator
     if log.admin is not None:
@@ -59,16 +77,25 @@ def get_admin_or_operator(log):
     return '-'
 
 def get_districts(request):
+    """
+        Return the districts data
+    """
     return JsonResponse(DistrictManager().return_geo_json(), safe=False)
 
 @login_required
 def set_crisis(request):
+    """
+        Set crisis level
+    """
     if not is_admin(request.user):
         return HttpResponseBadRequest()
     CrisisManager().set_crisis_level(request.GET.get('district'), request.GET.get('newcrisis'), None)
     return HttpResponse("Success", content_type="text/plain")
 
 def map_events(request):
+    """
+        Display events on the map
+    """
     # if not isOperator(request.user):
     #     return HttpResponseBadRequest()
     tabs = AdminTabViews()
@@ -77,6 +104,9 @@ def map_events(request):
 
 @login_required
 def list_events(request):
+    """
+        Return a list of events
+    """
     if not is_admin(request.user):
         return HttpResponseBadRequest()
     tabs = AdminTabViews()
@@ -88,6 +118,9 @@ def list_events(request):
 
 @login_required
 def delete_event(request):
+    """
+        Method to delete an event
+    """
     if not is_admin(request.user):
         return HttpResponseBadRequest()
     if request.method == 'GET':

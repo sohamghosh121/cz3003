@@ -1,3 +1,6 @@
+"""
+    A general controller
+"""
 from django.contrib.auth import authenticate, login as dologin, logout
 
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -132,6 +135,9 @@ def get_dengue_info(request):
 
 
 def refreshAPI(request):
+    """
+        Refresh the information on the map
+    """
     WeatherAPI().pull_weather_update()
     DengueAPI().pull_update()
     WeatherAPI().pull_PSI_update()
@@ -139,6 +145,9 @@ def refreshAPI(request):
 
 
 def get_events_geo_JSON(request):
+    """
+        Get geo JSON format of events
+    """
     data = {}
     geojson = {'type': 'FeatureCollection', 'features': []}
     events = get_events(request)
@@ -162,7 +171,10 @@ def get_events_geo_JSON(request):
     return JsonResponse(data, safe=False)
 
 
-def get_events(request):
+def get_events(request):]
+    """
+        Get an event list from the database
+    """
     events_list = []
     events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
     events_list.extend(TerroristEvent.objects.filter(event__isactive=True))
@@ -176,6 +188,9 @@ def get_events(request):
 
 
 def get_event_type_icon(eventtype):
+    """
+        Get an event type icon
+    """
     if eventtype == 'traffic':
         return 'caraccident.png'
     elif eventtype == 'terrorist':
@@ -183,6 +198,9 @@ def get_event_type_icon(eventtype):
 
 
 def get_event_type(event):
+    """
+        Get an event type
+    """
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):

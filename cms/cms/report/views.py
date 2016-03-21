@@ -1,3 +1,6 @@
+"""
+    Module to generate the report to send to the PMO
+"""
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from cms.models import TrafficEvent, TerroristEvent, Districts
 from selenium import webdriver
@@ -9,6 +12,9 @@ import requests
 
 
 def get_traffic_info(request):
+    """
+        Get traffic information from the database
+    """
     traffic_events = TrafficEvent.objects.all()
     response = {}
     num_vehicles = 0
@@ -28,6 +34,9 @@ def get_traffic_info(request):
 
 
 def get_terrorist_info(request):
+    """
+        Get terrorist information from the database
+    """
     terrorist_events = TerroristEvent.objects.all()
     response = {}
     num_hostiles = 0
@@ -50,6 +59,9 @@ def get_terrorist_info(request):
     return JsonResponse(response, safe=False)
 
 def get_crisis_info(request):
+    """
+        Get the crisis information for each region
+    """
     districts = Districts.objects.all()
     response = {}
     for d in districts:
@@ -58,6 +70,9 @@ def get_crisis_info(request):
 
 
 def get_map_image(request):
+    """
+        Get the image of Google Map
+    """
     try:
         print 'capturing screenshots'
         # browser = webdriver.Firefox()

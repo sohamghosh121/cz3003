@@ -1,3 +1,6 @@
+"""
+    Module that dispatches information to social media
+"""
 from ..pushapis.fb import FacebookAPI
 from ..pushapis.twitter import TwitterAPI
 

@@ -1,3 +1,6 @@
+"""
+    Module that sends email to Prime Minister's Office
+"""
 import pdfkit
 from ..pushapis.email_api import EmailAPI
 

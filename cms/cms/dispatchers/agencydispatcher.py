@@ -1,3 +1,6 @@
+"""
+    Module that dispatches information to relevant agencies
+"""
 from ..pushapis.sms import TwilioAPI
 from ..models import TrafficEvent, TerroristEvent
 

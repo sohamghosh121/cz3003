@@ -1,4 +1,10 @@
+"""
+    Module that display Views
+"""
 class TabView:
+    """
+        A tab view
+    """
     tab_id = ''
     url = ''
     is_active = False
@@ -8,6 +14,9 @@ class TabView:
 
 
 class MapView(TabView):
+    """
+        A map view
+    """
     tab_id = 'map'
     icon = 'map'
     url = 'map'
@@ -15,6 +24,9 @@ class MapView(TabView):
 
 
 class ListView(TabView):
+    """
+        A list view
+    """
     tab_id = 'list'
     icon = 'list'
     url = 'list'

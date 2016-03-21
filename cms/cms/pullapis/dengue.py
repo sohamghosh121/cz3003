@@ -22,6 +22,9 @@ class DengueAPI(PullAPI):
     DENGUE_EXTRACTED_FOLDER = "pullapis/dengue_extracted"
 
     def download_file(self, url, download_file_name):
+        """
+            Download the necessary file
+        """
         r = requests.get(url, stream=True)
         if (r.status_code == 200):
             with open(download_file_name, 'wb') as f:
@@ -34,6 +37,9 @@ class DengueAPI(PullAPI):
             return False
 
     def unzip(self, zipped_file, extract_location):
+        """
+            Unzip a file
+        """
         try:
             zip = zipfile.ZipFile(zipped_file)
             zip.extractall(extract_location)
@@ -44,10 +50,16 @@ class DengueAPI(PullAPI):
             return False
 
     def update_dengue_info_in_database(self, file_directory):
+        """
+            Update dengue information into the database
+        """
         command_to_run = "shp2pgsql -s 3414 -d -W LATIN1 %s cms_dengue | psql -d cms" % file_directory
         os.system(command_to_run)
 
     def pull_update(self):
+        """
+            Pull the dengue update
+        """
         try:
             if (self.download_file(self.DENGUE_URL, self.DENGUE_ZIP_FILENAME)):
                 if (self.unzip(self.DENGUE_ZIP_FILENAME, self.DENGUE_EXTRACTED_FOLDER)):
@@ -60,6 +72,9 @@ class DengueAPI(PullAPI):
             return False
 
     def return_geo_json(self):
+        """
+            Return geo json format of dengue
+        """
         self.pull_update()
         dengue = Dengue.objects.all()
         dengue_json = json.loads(serialize('geojson', dengue))

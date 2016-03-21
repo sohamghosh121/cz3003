@@ -1,3 +1,6 @@
+"""
+    Module that handles Singapore's districts
+"""
 import os
 import json
 from django.core.serializers import serialize

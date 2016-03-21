@@ -1,3 +1,6 @@
+"""
+    Module of model classes in the database
+"""
 from django.db import models
 from django.contrib.gis.db import models as gismodels
 from django.contrib.auth.models import User

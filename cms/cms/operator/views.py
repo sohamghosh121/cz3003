@@ -1,3 +1,6 @@
+"""
+    Module that acts like an Operator Controller
+"""
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from ..views import render_tab_view, is_operator, is_admin
 from django.shortcuts import render, redirect
@@ -14,12 +17,18 @@ from ..pullapis.weather import WeatherAPI
 
 
 def lat_lng_to_point(string_obj):
+    """
+        Convert a given lattitude, longitude to a Point object
+    """
     lat, lng = string_obj.split(',')
     return Point(float(lng), float(lat))
 
 
 @login_required
 def deactivate_event(request):
+    """
+        Deactivate an event
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     event_id = request.GET.get('eventid')
@@ -39,6 +48,9 @@ def deactivate_event(request):
 
 @login_required
 def update_event(request):
+    """
+        Update an event
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     if request.method == 'POST':
@@ -97,6 +109,9 @@ def update_event(request):
 
 @login_required
 def new_event(request):
+    """
+        Create a new event
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     if request.method == 'GET':
@@ -155,6 +170,9 @@ def new_event(request):
 
 @login_required
 def list_events(request):
+    """
+        List all the events
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     tabs = OperatorTabViews()
@@ -167,6 +185,9 @@ def list_events(request):
 
 # @login_required
 def map_events(request):
+    """
+        Display events on the map
+    """
     # if not isOperator(request.user):
     #     return HttpResponseBadRequest()
     tabs = OperatorTabViews()
@@ -175,6 +196,9 @@ def map_events(request):
 
 
 def get_event_type(event):
+    """
+        Get an event type
+    """
     if isinstance(event, TrafficEvent):
         return 'traffic'
     elif isinstance(event, TerroristEvent):
@@ -182,6 +206,9 @@ def get_event_type(event):
 
 
 def get_event_update_form(request):
+    """
+        Update the event in the form
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     context = {}
@@ -197,6 +224,9 @@ def get_event_update_form(request):
 
 
 def get_events(request):
+    """
+        Get event list from the database
+    """
     if not is_operator(request.user):
         return HttpResponseBadRequest()
     events_list = []
@@ -212,12 +242,18 @@ def get_events(request):
 
 
 def get_event_type_icon(event_type):
+    """
+        Get the event type icon
+    """
     if event_type == 'traffic':
         return 'caraccident.png'
     elif event_type == 'terrorist':
         return 'terrorist.png'
 
 def get_events_geo_JSON(request):
+    """
+        Get JSON format of events
+    """
     # if not isOperator(request.user):
     #     return HttpResponseBadRequest()
     data = {}
@@ -244,9 +280,15 @@ def get_events_geo_JSON(request):
 
 
 def pull_weather(request):
+    """
+        Pull weather data from WeatherAPI
+    """
     return JsonResponse(WeatherAPI().return_geo_json(), safe=False)
 
 def refresh_API(request):
+    """
+        Refresh data on the map
+    """
     WeatherAPI().pull_weather_update()
     DengueAPI().pull_update()
     WeatherAPI().pull_PSI_update()

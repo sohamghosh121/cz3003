@@ -1,11 +1,20 @@
+"""
+    Module that performs crisis calculation
+"""
 from ..models import TrafficEvent, TerroristEvent, Singapore, Districts
 from ..dispatchers.pmodispatcher import PMODispatcher
 
 
 class CrisisCalculator:
+    """
+        Module to perform crisis calculation automatically
+    """
     SEVERITY_THRESHOLD_BINS = [100, 150, 300, 500, 750, 1000]
 
     def event_severity_calculator(self, event):
+        """
+            Event severity calculator
+        """
         severity = 20 * event.event.num_casualties + \
             10 * event.event.num_injured
         if isinstance(event, TrafficEvent):
@@ -17,12 +26,18 @@ class CrisisCalculator:
         return severity
 
     def get_crisis_level(self, severity):
+        """
+            Return the crisis level
+        """
         for i in range(len(self.SEVERITY_THRESHOLD_BINS)):
             if severity < self.SEVERITY_THRESHOLD_BINS[i]:
                 return i
         return 5
 
     def get_events(self, geom):
+        """
+            Get events from the database
+        """
         events = []
         events.extend(TrafficEvent.objects.filter(event__location__within=geom))
         events.extend(
@@ -30,6 +45,9 @@ class CrisisCalculator:
         return events
 
     def check_crisis(self):
+        """
+            Check the crisis in different regions in the map
+        """
         singapore = Singapore.objects.all()
         new_crises = {}
         for singapore_obj in singapore:
