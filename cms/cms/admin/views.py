@@ -15,8 +15,8 @@ def get_transaction_log(request):
     tabs.set_active_tab('log')
     event_type_dict = {}
     return render_tab_view(request, tabs, {
-        'event_transaction_log': EventTransactionLog.objects.all(),
-        'crisis_log_database': CrisisTransactionLog.objects.all(),
+        'eventTransactionLog': EventTransactionLog.objects.all(),
+        'crisisLogDatabase': CrisisTransactionLog.objects.all(),
     })
 
 def get_crisis_view(request):
