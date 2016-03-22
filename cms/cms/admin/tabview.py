@@ -1,15 +1,12 @@
 """
-    View modules for admin
+    View module for admin
 """
 from ..tabview import TabView, TabViews, MapView, ListView
 
-
-
 class AdminLogView(TabView):
     """
-        Transaction Log View for admin
+        Admin Log View
     """
-
     tab_id = 'log'
     url = 'admin/log'
     template = 'admin/log.html'
@@ -18,35 +15,31 @@ class AdminLogView(TabView):
 
 class AdminCrisisView(TabView):
     """
-        Crisis View for admin
+        View for admin to see the crisis level
     """
-
-	tab_id = 'crisis'
-	url = 'admin/crisis'
-	template = 'admin/crisis.html'
-	title = 'Crisis Manager'
-	icon = 'warning'
+    tab_id = 'crisis'
+    url = 'admin/crisis'
+    template = 'admin/crisis.html'
+    title = 'Crisis Manager'
+    icon = 'warning'
 
 class AdminMapView(MapView):
     """
-        Map View for admin
+        View for admin to see the map
     """
-
     url = 'admin/map'
     template = 'common/map.html'
 
 class AdminListEvents(ListView):
     """
-        List of events for admin
+        View for admin to see a list of AdminListEvents
     """
-
     url = 'admin/list'
     template = 'admin/list.html'
 
 class AdminTabViews(TabViews):
     """
-        Module to switch between tab views
+        Tab view to switch between different views for admin
     """
-
     def __init__(self):
         self.tabs = [AdminLogView(), AdminCrisisView(), AdminMapView(), AdminListEvents()]

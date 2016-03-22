@@ -2,7 +2,6 @@ from django.conf.urls import include, url
 from django.views.generic import RedirectView
 import views
 
-
 urlpatterns = [
 	url(r'^$', RedirectView.as_view(url='log')),
     # url(r'^healthCheck/', views.healthCheck),

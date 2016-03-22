@@ -171,7 +171,7 @@ def get_events_geo_JSON(request):
     return JsonResponse(data, safe=False)
 
 
-def get_events(request):]
+def get_events(request):
     """
         Get an event list from the database
     """
