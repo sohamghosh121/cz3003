@@ -23,7 +23,7 @@ through	the	CMS.
 1. Python
 2. pip
 3. PostgreSQL
-4. Reddis server
+4. Redis server
 5. wkhtmltopdf
 6. OSGeo4W
 7. Other python packages installed by command line: pip install -r requirements.txt
