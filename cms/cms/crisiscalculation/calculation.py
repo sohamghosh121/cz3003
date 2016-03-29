@@ -5,11 +5,21 @@ from ..models import TrafficEvent, TerroristEvent, Singapore, Districts
 from ..dispatchers.pmodispatcher import PMODispatcher
 
 
+class InvalidSeverityException(Exception):
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return 'Invalid severity value: ' + repr(self.value)
+
+
 class CrisisCalculator:
+
     """
         Module to perform crisis calculation automatically
     """
-    SEVERITY_THRESHOLD_BINS = [100, 150, 300, 500, 750, 1000]
+    SEVERITY_THRESHOLD_BINS = [100, 150, 300, 500, 750]
 
     def event_severity_calculator(self, event):
         """
@@ -28,7 +38,10 @@ class CrisisCalculator:
     def get_crisis_level(self, severity):
         """
             Return the crisis level
+                - 0 <= severity < 1
         """
+        if severity < 0:
+            raise InvalidSeverityException(severity)
         for i in range(len(self.SEVERITY_THRESHOLD_BINS)):
             if severity < self.SEVERITY_THRESHOLD_BINS[i]:
                 return i
@@ -52,7 +65,7 @@ class CrisisCalculator:
         new_crises = {}
         for singapore_obj in singapore:
             total_severity = sum([self.event_severity_calculator(event)
-                                 for event in self.get_events(singapore_obj.geom)])
+                                  for event in self.get_events(singapore_obj.geom)])
             print singapore_obj.name_1, total_severity
             crisis_level = self.get_crisis_level(total_severity)
             district = Districts.objects.get(district=singapore_obj.name_1)
@@ -60,5 +73,6 @@ class CrisisCalculator:
                 continue
             else:
                 new_crises[district.district] = crisis_level
+                # district.crisis = crisis_level
         print new_crises
         # PMODispatcher().emergencyDispatch(new_crises)

@@ -9,8 +9,10 @@ from cms.pushapis.fb import FacebookAPI
 from cms.pushapis.twitter import TwitterAPI
 from cms.pushapis.sms import TwilioAPI
 from cms.pushapis.email_api import EmailAPI
+from cms.crisiscalculation.calculation import CrisisCalculator, InvalidSeverityException
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
+import random
 
 
 testEvent = {
@@ -120,20 +122,33 @@ class PushAPITest(TestCase):
     def test_fb_update(self):
         randomizeUpdate = random.randint(1, 10000)
         self.assertTrue(
-            FacebookAPI().pushUpdate('System Test %d #ignorethis' %
-                                     randomizeUpdate))
+            FacebookAPI().push_update('System Test %d #ignorethis' %
+                                      randomizeUpdate))
 
     def test_twitter_update(self):
-        import random
         randomizeUpdate = random.randint(1, 10000)
         self.assertTrue(
-            TwitterAPI().pushUpdate('System Test %d #ignorethis' %
-                                    randomizeUpdate))
+            TwitterAPI().push_update('System Test %d #ignorethis' %
+                                     randomizeUpdate))
 
     def test_email_update(self):
-        self.assertTrue(EmailAPI().pushUpdate(
+        self.assertTrue(EmailAPI().push_update(
             'ghosh.soham@gmail.com', 'System Test', 'System Test #ignorethis'))
 
     def test_sms_update(self):
         self.assertTrue(
-            TwilioAPI().pushUpdate('System Test #ignorethis', '+6597741853'))
+            TwilioAPI().push_update('System Test #ignorethis', '+6597741853'))
+
+
+class CrisisCalculatorTest(TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_serverity_thresholds(self):  # boundary value testing?
+        severity_test_values = [0, 99, 100, 150, 300, 500, 750, 1000]
+        true_crisis_levels = [0, 0, 1, 2, 3, 4, 5]
+        for tv, av in zip(severity_test_values, true_crisis_levels):
+            self.assertEqual(CrisisCalculator().get_crisis_level(tv), av)
+        with self.assertRaises(InvalidSeverityException):
+            CrisisCalculator().get_crisis_level(-1)

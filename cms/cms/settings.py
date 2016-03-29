@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'cms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'cms',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'NAME': 'cmsdb',
+        'USER': 'sohamghosh',
+        'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '8000',
+        'PORT': '',
     }
 }
 
@@ -155,3 +155,6 @@ SERIALIZATION_MODULES = {
 
 
 LOGIN_URL = '/login'
+
+EMAIL_HOST = 'localhost'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

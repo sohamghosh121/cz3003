@@ -137,7 +137,7 @@ class WeatherAPI(PullAPI):
         weather = Weather.objects.all()
         geojson = {'type': 'FeatureCollection', 'features': []}
         for w in weather:
-            longform, icon = self.getNowcastDetails(w.condition)
+            longform, icon = self.get_nowcast_details(w.condition)
             geojson['features'].append({
                 'type': 'Feature',
                 'geometry': {
