@@ -60,6 +60,7 @@ class WeatherAPI(PullAPI):
         """
             Pulls PSI Data
         """
+        print "hihi"
         r = requests.get(self.PSI_URL)
         if (r.status_code == 200):
             root = ElementTree.fromstring(r.content)
