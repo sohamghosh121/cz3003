@@ -60,11 +60,12 @@
 }
 </style>
 <div id="filters-div">
-    <span class="filter-option"> Show Weather <input type="checkbox" name="filter" value="weather" checked /> </span>
-    <span class="filter-option"> Show Dengue <input type="checkbox" name="filter" value="dengue" checked /> </span>
-    <span class="filter-option haze-filter-option"> Show Haze <input type="checkbox" name="filter" value="haze" checked /> </span>
-    <span class="filter-option"> Show Traffic Events <input type="checkbox" name="filter" value="traffic" checked /> </span>
-    <span class="filter-option"> Show Terrorist Events <input type="checkbox" name="filter" value="terrorist" checked /> </span>
+    <span class="filter-option"> Weather <input type="checkbox" name="filter" value="weather" checked /> </span>
+    <span class="filter-option"> Dengue <input type="checkbox" name="filter" value="dengue" checked /> </span>
+    <span class="filter-option haze-filter-option"> Haze <input type="checkbox" name="filter" value="haze" checked /> </span>
+    <span class="filter-option"> Traffic Events <input type="checkbox" name="filter" value="traffic" checked /> </span>
+    <span class="filter-option"> Terrorist Events <input type="checkbox" name="filter" value="terrorist" checked /> </span>
+    <span class="filter-option"> District Boundaries <input type="checkbox" name="filter" value="district" checked /> </span>
     <button style = "vertical-align: middle;" id = "refreshAPI"><i class="fa fa-refresh fa-2x"></i></button>
 </div>
 
@@ -101,7 +102,7 @@
 	function initMap() {
         var mapDiv = document.getElementById('map');
         var infowindow =  new google.maps.InfoWindow();
-        var weatherGeoJSON, eventsGeoJSON, dengueGeoJSON;
+        var weatherGeoJSON, eventsGeoJSON, dengueGeoJSON, districtGeoJSON;
 
         var map = new google.maps.Map(mapDiv, {
           center: {lat: 1.364922150947930, lng: 103.80912780761719},
@@ -134,6 +135,14 @@
                 dengueGeoJSON = data;
                 map.data.addGeoJson(data);
         })
+        
+        $.ajax({
+            url: '/get_district_info',
+            dataType: 'json'
+        }).done(function (data) {
+            districtGeoJSON = data;
+             map.data.addGeoJson(data);
+        });  
 
         map.data.addListener('click', function(event) {
             var feature = event.feature
@@ -206,6 +215,14 @@
                     }
                 }
             } 
+            if (type == 'district') {
+                return {
+                    clickable: false,
+                    fillColor: "rgba(0,0,0,0)",
+                    strokeColor: "rgba(0, 0, 0,0.6)",
+                    strokeWeight: 1
+                };
+            }
             else if (type == 'traffic' || type == 'terrorist'){
                 return {
                     'icon': {
@@ -227,6 +244,7 @@
                     map.data.addGeoJson(weatherGeoJSON);
                     map.data.addGeoJson(eventsGeoJSON);
                     map.data.addGeoJson(dengueGeoJSON);
+                    map.data.addGeoJson(districtGeoJSON);
                     // selectively remove
                     $('input[name="filter"]:checked').each(function(idx, elem){
                         filters.push($(elem).val());

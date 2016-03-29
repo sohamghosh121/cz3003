@@ -9,6 +9,9 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import Point
+
+from districts.districts import DistrictManager
+
 from models import Operator, Admin
 from models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, Operator, Reporter, Haze
 from pullapis.weather import WeatherAPI
@@ -133,6 +136,11 @@ def get_dengue_info(request):
     """
     return JsonResponse(DengueAPI().return_geo_json(), safe=False)
 
+def get_district_info(request):
+    """
+        Return the districts data
+    """
+    return JsonResponse(DistrictManager().return_geo_json(), safe=False)
 
 def refreshAPI(request):
     """

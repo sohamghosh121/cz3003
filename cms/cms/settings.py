@@ -80,8 +80,8 @@ WSGI_APPLICATION = 'cms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'cmsdb',
-        'USER': 'sohamghosh',
+        'NAME': 'cms',
+        'USER': os.getlogin(),
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
