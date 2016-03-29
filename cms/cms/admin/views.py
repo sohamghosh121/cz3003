@@ -6,12 +6,15 @@ from ..models import TrafficEvent, TerroristEvent, Event, EventTransactionLog, O
 from tabview import AdminTabViews
 from ..views import render_tab_view, is_operator, is_admin
 from ..districts.districts import DistrictManager, CrisisManager
+from ..dispatchers.pmodispatcher import PMODispatcher
 from django.template.defaulttags import register
-import json, requests
+import json
+import requests
 from django.contrib.auth.decorators import login_required
 
 # def healthCheck(request):
 #     return HttpResponse('It\'s all good! Admin UI works :)')
+
 
 def get_transaction_log(request):
     """
@@ -25,6 +28,7 @@ def get_transaction_log(request):
         'crisisLogDatabase': CrisisTransactionLog.objects.all(),
     })
 
+
 def get_crisis_view(request):
     """
         Set crisis manager as active tab
@@ -34,7 +38,8 @@ def get_crisis_view(request):
     return render_tab_view(request, tabs, {
     })
 
-@register.filter(name = 'type')
+
+@register.filter(name='type')
 def get_event_type(log):
     """
         Choose an event type as active tab
@@ -45,27 +50,31 @@ def get_event_type(log):
         return 'Terrorist'
     return None
 
-@register.filter (name = 'address')
+
+@register.filter(name='address')
 def get_address_from_lat_long(latlong):
     """
         Take the location address from given lattitude, longitude
     """
-    url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&sensor=false" % (latlong.y,latlong.x)
+    url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&sensor=false" % (
+        latlong.y, latlong.x)
     r = requests.get(url)
     result = r.json()
     address = ""
     for x in result.get('results')[0].get('address_components'):
-        address += x.get('long_name') +', '
-    return address [:-2]
+        address += x.get('long_name') + ', '
+    return address[:-2]
 
-@register.filter (name = 'tran')
+
+@register.filter(name='tran')
 def get_long_transaction_type(log):
     """
         Display the transaction type
     """
     return log.get_transaction_type_display()
 
-@register.filter (name = 'adminop')
+
+@register.filter(name='adminop')
 def get_admin_or_operator(log):
     """
         Choose admin or operator as active tab
@@ -76,11 +85,13 @@ def get_admin_or_operator(log):
         return log.admin
     return '-'
 
+
 def get_districts(request):
     """
         Return the districts data
     """
     return JsonResponse(DistrictManager().return_geo_json(), safe=False)
+
 
 @login_required
 def set_crisis(request):
@@ -89,8 +100,10 @@ def set_crisis(request):
     """
     if not is_admin(request.user):
         return HttpResponseBadRequest()
-    CrisisManager().set_crisis_level(request.GET.get('district'), request.GET.get('newcrisis'), None)
+    CrisisManager().set_crisis_level(
+        request.GET.get('district'), request.GET.get('newcrisis'), None)
     return HttpResponse("Success", content_type="text/plain")
+
 
 def map_events(request):
     """
@@ -101,6 +114,7 @@ def map_events(request):
     tabs = AdminTabViews()
     tabs.set_active_tab('map')
     return render_tab_view(request, tabs, {'haze': Haze.objects.all()})
+
 
 @login_required
 def list_events(request):
@@ -116,6 +130,7 @@ def list_events(request):
         'terroristevents': TerroristEvent.objects.filter(event__isactive=True)
     })
 
+
 @login_required
 def delete_event(request):
     """
@@ -127,12 +142,24 @@ def delete_event(request):
         event_id = request.GET.get('eventid')
         event_type = request.GET.get('eventtype')
         if (event_type == 'traffic'):
-            t = TrafficEvent.objects.get(id = event_id)
-            e = Event.objects.get(id = t.event.id)
+            t = TrafficEvent.objects.get(id=event_id)
+            e = Event.objects.get(id=t.event.id)
             e.delete()
         elif (event_type == 'terrorist'):
-            t = TerroristEvent.objects.get(id = event_id)
+            t = TerroristEvent.objects.get(id=event_id)
             print t.event.id
-            e =Event.objects.get(id = t.event.id)
+            e = Event.objects.get(id=t.event.id)
             e.delete()
         return HttpResponse("Success", content_type="text/plain")
+
+
+@login_required
+def report_manager(request):
+    tabs = AdminTabViews()
+    tabs.set_active_tab('reportmanager')
+    return render_tab_view(request, tabs)
+
+
+def send_report(request):
+    PMODispatcher().dispatch()
+    return JsonResponse({'success': True})

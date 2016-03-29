@@ -21,9 +21,8 @@ body {
 #logout {
 	display: inline-block;
     float: right;
-    line-height: 70px;
+    color: #c7c7c7;
     font-size: 0.6em;
-    color: #ccc;
 }
 
 

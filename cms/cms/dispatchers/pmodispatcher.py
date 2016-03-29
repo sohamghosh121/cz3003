@@ -3,6 +3,8 @@
 """
 import pdfkit
 from ..pushapis.email_api import EmailAPI
+from time import strftime
+import datetime
 
 
 class PMODispatcher:
@@ -34,15 +36,17 @@ class PMODispatcher:
         """
             Generate PDF from html
         """
-        pdfkit.from_url('http://localhost:3000/report', 'out.pdf')
+        pdfkit.from_url('http://localhost:8000/report', 'report.pdf')
 
     def dispatch(self):
         """
             Dispatch email to PMO using email API
         """
         self.generate_PDF()
+        subject = 'Crisis Management System Report (%s)' % (
+            datetime.datetime.now().strftime('%m/%d %H:%M'))
         EmailAPI().push_update(
-            self.PMO_EMAIL, 'Crisis Management System Report', get_email_content(), attachment='out.pdf')
+            self.PMO_EMAIL, subject, self.get_email_content(), attachment='report.pdf')
 
     def emergency_dispatch(self, crisis_dic):
         """
@@ -50,5 +54,4 @@ class PMODispatcher:
             Input: crisis_dic, a dictionary of district names and corresponding suggested crisis level
         """
         EmailAPI().push_update(
-            PMO_EMAIL, 'Crisis Management System Report', get_emergency_email_content(crisis_dic))
-
+            self.PMO_EMAIL, 'Crisis Management System Report', self.get_emergency_email_content(crisis_dic))
