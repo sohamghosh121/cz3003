@@ -15,7 +15,13 @@
 <body>
 	<div id="header" class="navbar-collapse">
 		<div id="logo_section">
-			 Crisis Management System | {{ usertype }}
+			 Crisis Management System | {% if 'admin' in request.path %}
+			    Admin
+			{% elif 'operator' in request.path %}
+			    Operator
+			{% else %}
+			    Public
+			{% endif %} 
 		</div>
 		<a href="/logout">
 			<div id="logout">
