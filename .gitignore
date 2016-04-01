@@ -67,7 +67,14 @@ migrations/
 #DS_Store
 .DS_Store
 
-DENGUE_CLUSTER/*.shp
-DENGUE_CLUSTER/*.sbf
-DENGUE_CLUSTER/*.dbf
+DENGUE_CLUSTER/
 *.zip
+crisis_screenshot.png
+dengue_screenshot.png
+terrorist_screenshot.png
+traffic_screenshot.png
+weather_screenshot.png
+
+#SVN stuff
+*.svn-base
+.svn/
