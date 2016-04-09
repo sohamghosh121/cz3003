@@ -23,11 +23,19 @@
 			    Public
 			{% endif %} 
 		</div>
-		<a href="/logout">
-			<div id="logout">
-				Logout
-			</div>
-		</a>
+		{% if 'public' not in request.path %}
+			<a href="/logout">
+				<div id="logout">
+					Logout
+				</div>
+			</a>
+			{% else %}
+			<a href = "/login">
+				<div id="logout">
+					Login
+				</div>
+			</a>
+		{% endif %} 
 	</div>
 		<div class="nav navbar-nav sidebar col-md-3">
 

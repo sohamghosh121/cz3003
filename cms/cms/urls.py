@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin as djangoadmin
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 import views
 import settings
 import operator.urls
@@ -45,4 +45,5 @@ urlpatterns = [
     url(r'^maps/terrorist', TemplateView.as_view(template_name='maps/terrorist.html')),
     url(r'^maps/traffic', TemplateView.as_view(template_name='maps/traffic.html')),
     url(r'^maps/crisis', TemplateView.as_view(template_name='maps/crisis.html')),
+    url(r'^$', RedirectView.as_view(url='public'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -210,7 +210,7 @@ function deleteEvent(eventid, eventtype){
 	    		data: {'eventid': eventid, 'eventtype': eventtype},
 	    		method: 'GET'
 	    	}).done(function() {
-	    		location.load();
+	    		location.reload();
 	    	}).fail(function(){
 	    		console.log('failed'); // some proper failure message
 	    	});

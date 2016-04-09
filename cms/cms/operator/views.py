@@ -33,7 +33,7 @@ def deactivate_event(request):
         return HttpResponseBadRequest()
     event_id = request.GET.get('eventid')
     e = Event.objects.get(id=event_id)
-    e.is_active = False
+    e.isactive = False
     e.save()
     operator = Operator.objects.get(user_ptr_id=request.user.id)
     event_log = EventTransactionLog.objects.create(
@@ -178,8 +178,8 @@ def list_events(request):
     tabs = OperatorTabViews()
     tabs.set_active_tab('list')
     return render_tab_view(request, tabs, {
-        'traffic_events': TrafficEvent.objects.filter(event__isactive=True),
-        'terrorist_events': TerroristEvent.objects.filter(event__isactive=True)
+        'trafficevents': TrafficEvent.objects.filter(event__isactive=True),
+        'terroristevents': TerroristEvent.objects.filter(event__isactive=True)
     })
 
 

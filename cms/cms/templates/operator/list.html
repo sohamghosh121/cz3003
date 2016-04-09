@@ -125,7 +125,7 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/>{{event.event.num_injured}}
 						<img src="{% static 'img/caraccident.png' %}" class="details-img"/>{{event.num_vehicles}}
 					</td> 
-					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <a class="fa fa-toggle-on fa-2x  edit-controls" href="deactivateEvent?eventid={{event.event.id}}"></a> </td>
+					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'traffic')"></i> <a class="fa fa-toggle-on fa-2x  edit-controls" href="deactivate_event?eventid={{event.event.id}}"></a> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -166,7 +166,7 @@
 						<img src="{% static 'img/injury.png' %}" class="details-img"/> {{event.event.num_injured}}
 						<img src="{% static 'img/terrorist.png' %}" class="details-img"/> {{event.num_hostiles}}
 					</td> 
-					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <a class="fa fa-toggle-on fa-2x edit-controls"></a>  </td>
+					<td> <i class="fa fa-edit fa-2x edit-controls" onclick="editEvent({{event.id}}, 'terrorist')"></i> <a class="fa fa-toggle-on fa-2x edit-controls" href="deactivate_event?eventid={{event.event.id}}"></a>  </td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -176,7 +176,7 @@
 <div id="form-modal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form name="update-event-form" method="POST" action="updateEvent">
+			<form name="update-event-form" method="POST" action="update_event">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">Update Event</h4>
