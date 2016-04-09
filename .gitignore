@@ -78,3 +78,6 @@ weather_screenshot.png
 #SVN stuff
 *.svn-base
 .svn/
+cms/pullapis/dengue_extracted
+DENGUE_CLUSTER.zip
+report.pdf
