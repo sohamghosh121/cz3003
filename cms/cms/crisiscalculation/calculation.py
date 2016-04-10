@@ -75,4 +75,4 @@ class CrisisCalculator:
                 new_crises[district.district] = crisis_level
                 # district.crisis = crisis_level
         print new_crises
-        # PMODispatcher().emergencyDispatch(new_crises)
+        PMODispatcher().emergency_dispatch(new_crises)

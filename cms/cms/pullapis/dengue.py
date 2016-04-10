@@ -8,10 +8,9 @@ import os
 import json
 from cms.models import Dengue
 from django.core.serializers import serialize
-from pullapi import PullAPI
 
 
-class DengueAPI(PullAPI):
+class DengueAPI:
 
     """
         DengueAPI Class for dengue.py
@@ -65,10 +64,11 @@ class DengueAPI(PullAPI):
                 if (self.unzip(self.DENGUE_ZIP_FILENAME, self.DENGUE_EXTRACTED_FOLDER)):
                     file_directory = "%s/%s" % (
                         self.DENGUE_EXTRACTED_FOLDER, self.DENGUE_SHP_FILENAME)
-                    self.update_dengue_info_in_database(fileDirectory)
+                    self.update_dengue_info_in_database(file_directory)
                     return True
             return False
-        except:
+        except Exception, e:
+            print e
             return False
 
     def return_geo_json(self):

@@ -27,7 +27,10 @@ class SocialMediaDispatcher:
         """
                 Construct update message and dispatch to social media platforms
         """
-        message = construct_message()
-        FacebookAPI().push_update(message)
-        TwitterAPI().push_update(message)
-        pass
+        try:
+            message = construct_message()
+            FacebookAPI().push_update(message)
+            TwitterAPI().push_update(message)
+            return True
+        except:
+            return False

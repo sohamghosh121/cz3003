@@ -54,4 +54,4 @@ class PMODispatcher:
             Input: crisis_dic, a dictionary of district names and corresponding suggested crisis level
         """
         EmailAPI().push_update(
-            self.PMO_EMAIL, 'Crisis Management System Report', self.get_emergency_email_content(crisis_dic))
+            self.PMO_EMAIL, 'Crisis Management System Alert', self.get_emergency_email_content(crisis_dic))

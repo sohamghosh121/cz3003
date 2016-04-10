@@ -102,6 +102,7 @@ def set_crisis(request):
         return HttpResponseBadRequest()
     CrisisManager().set_crisis_level(
         request.GET.get('district'), request.GET.get('newcrisis'), None)
+
     return HttpResponse("Success", content_type="text/plain")
 
 

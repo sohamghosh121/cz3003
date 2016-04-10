@@ -6,10 +6,9 @@ import requests
 from xml.etree import ElementTree
 from cms.models import Weather, Haze
 from django.contrib.gis.geos import Point
-from pullapi import PullAPI
 
 
-class WeatherAPI(PullAPI):
+class WeatherAPI:
 
     """
             WeatherAPI Class for weather.py
@@ -60,7 +59,6 @@ class WeatherAPI(PullAPI):
         """
             Pulls PSI Data
         """
-        print "hihi"
         r = requests.get(self.PSI_URL)
         if (r.status_code == 200):
             root = ElementTree.fromstring(r.content)

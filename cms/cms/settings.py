@@ -128,17 +128,17 @@ CELERY_IMPORTS = ('cms.tasks')
 CELERYBEAT_SCHEDULE = {
     'send-pmo-email-every-halfhour': {
         'task': 'pmo-emailer',
-        'schedule': timedelta(seconds=30),
+        'schedule': timedelta(seconds=60),
         'args': ()
     },
     'fetch-pull-apis': {
         'task': 'do-pull-apis',
-        'schedule': timedelta(seconds=600),
+        'schedule': timedelta(seconds=6),
         'args': ()
     },
     'check-for-forming-crisis': {
         'task': 'check-for-crisis',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=60),
         'args': ()
     },
 }
