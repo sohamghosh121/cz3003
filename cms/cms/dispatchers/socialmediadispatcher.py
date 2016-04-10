@@ -21,14 +21,14 @@ class SocialMediaDispatcher:
         """
             Construct message to update public based on crisis update
         """
-        return 'Crisis level in %s has been changed to Level %d. Please take care.' % (self.update.district, self.update.new_crisis)
+        return 'Crisis level in %s has been changed to Level %s. Please take care.' % (self.update.district, self.update.new_crisis)
 
     def dispatch(self):
         """
                 Construct update message and dispatch to social media platforms
         """
         try:
-            message = construct_message()
+            message = self.construct_message()
             FacebookAPI().push_update(message)
             TwitterAPI().push_update(message)
             return True
