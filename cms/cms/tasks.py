@@ -17,7 +17,7 @@ def email_pmo(self):
     """
         Background task to send PMO email every half an hour
     """
-    PMODispatcher().dispatch()
+    PMODispatcher().dispatch(True)
     return 'Success'
 
 

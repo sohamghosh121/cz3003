@@ -5,6 +5,7 @@ import pdfkit
 from ..pushapis.email_api import EmailAPI
 from time import strftime
 import datetime
+import os.path
 
 
 class PMODispatcher:
@@ -12,7 +13,7 @@ class PMODispatcher:
     """
         Generates PDF report and constructs email message to send to PMO using email API
     """
-    PMO_EMAIL = 'ghosh.soham@gmail.com'
+    PMO_EMAIL = 'cz3003cms@mailinator.com'
 
     def get_email_content(self):
         """
@@ -38,11 +39,12 @@ class PMODispatcher:
         """
         pdfkit.from_url('http://localhost:8000/report', 'report.pdf')
 
-    def dispatch(self):
+    def dispatch(self, shouldGenerate):
         """
             Dispatch email to PMO using email API
         """
-        self.generate_PDF()
+        if ((shouldGenerate == True) or (not os.path.isfile('report.pdf')) ):
+            self.generate_PDF()
         subject = 'Crisis Management System Report (%s)' % (
             datetime.datetime.now().strftime('%m/%d %H:%M'))
         EmailAPI().push_update(

@@ -30,7 +30,7 @@ def deactivate_event(request):
         Deactivate an event
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     event_id = request.GET.get('eventid')
     e = Event.objects.get(id=event_id)
     e.isactive = False
@@ -52,7 +52,7 @@ def update_event(request):
         Update an event
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     if request.method == 'POST':
         reporter = {}
         event_type = request.POST.get('eventtype')
@@ -113,7 +113,7 @@ def new_event(request):
         Create a new event
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     if request.method == 'GET':
         tabs = OperatorTabViews()
         tabs.set_active_tab('newevent')
@@ -174,7 +174,7 @@ def list_events(request):
         List all the events
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     tabs = OperatorTabViews()
     tabs.set_active_tab('list')
     return render_tab_view(request, tabs, {
@@ -210,7 +210,7 @@ def get_event_update_form(request):
         Update the event in the form
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     context = {}
     event_id = request.GET.get('eventid')
     context['eventtype'] = request.GET.get('eventtype')
@@ -228,7 +228,7 @@ def get_events(request):
         Get event list from the database
     """
     if not is_operator(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     events_list = []
     events_list.extend(TrafficEvent.objects.filter(event__isactive=True))
     events_list.extend(TerroristEvent.objects.filter(event__isactive=True))

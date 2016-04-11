@@ -169,5 +169,5 @@ def report_manager(request):
 
 
 def send_report(request):
-    PMODispatcher().dispatch()
+    PMODispatcher().dispatch(False)
     return JsonResponse({'success': True})
