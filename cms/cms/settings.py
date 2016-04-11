@@ -133,7 +133,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'fetch-pull-apis': {
         'task': 'do-pull-apis',
-        'schedule': timedelta(seconds=6),
+        'schedule': timedelta(seconds=60),
         'args': ()
     },
     'check-for-forming-crisis': {

@@ -20,6 +20,8 @@ def get_transaction_log(request):
     """
         Get the transaction log from the database
     """
+    if not is_admin(request.user):
+        return HttpResponseForbidden()
     tabs = AdminTabViews()
     tabs.set_active_tab('log')
     event_type_dict = {}
@@ -33,6 +35,8 @@ def get_crisis_view(request):
     """
         Set crisis manager as active tab
     """
+    if not is_admin(request.user):
+        return HttpResponseForbidden()
     tabs = AdminTabViews()
     tabs.set_active_tab('crisis')
     return render_tab_view(request, tabs, {
@@ -61,9 +65,12 @@ def get_address_from_lat_long(latlong):
     r = requests.get(url)
     result = r.json()
     address = ""
-    for x in result.get('results')[0].get('address_components'):
-        address += x.get('long_name') + ', '
-    return address[:-2]
+    if (len(result.get('results'))>0):
+        for x in result.get('results')[0].get('address_components'):
+            address += x.get('long_name') + ', '
+        return address[:-2]
+    else:
+        return ""
 
 
 @register.filter(name='tran')
@@ -99,7 +106,7 @@ def set_crisis(request):
         Set crisis level
     """
     if not is_admin(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     CrisisManager().set_crisis_level(
         request.GET.get('district'), request.GET.get('newcrisis'), None)
 
@@ -110,8 +117,8 @@ def map_events(request):
     """
         Display events on the map
     """
-    # if not isOperator(request.user):
-    #     return HttpResponseBadRequest()
+    if not is_admin(request.user):
+        return HttpResponseForbidden()
     tabs = AdminTabViews()
     tabs.set_active_tab('map')
     return render_tab_view(request, tabs, {'haze': Haze.objects.all()})
@@ -123,7 +130,7 @@ def list_events(request):
         Return a list of events
     """
     if not is_admin(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     tabs = AdminTabViews()
     tabs.set_active_tab('list')
     return render_tab_view(request, tabs, {
@@ -138,7 +145,7 @@ def delete_event(request):
         Method to delete an event
     """
     if not is_admin(request.user):
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
     if request.method == 'GET':
         event_id = request.GET.get('eventid')
         event_type = request.GET.get('eventtype')

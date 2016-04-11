@@ -44,7 +44,7 @@ class DistrictManager():
         """ 
             returns GeoJsonData for district boundaries
         """
-        # self.importDistricts()
+        # self.import_districts()
         singapore = Singapore.objects.all()
         singaporeJson = json.loads(serialize('geojson', singapore))
         for x in singaporeJson['features']:
