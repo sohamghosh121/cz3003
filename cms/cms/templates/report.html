@@ -21,15 +21,25 @@
 	<script>
 		var map = document.getElementById("map");
 		var imgBase = '/static/img/';
-		$.ajax({
-            url: '/report/get_map_image',
-            method:'GET'
-        }).done(function (reponse) {
-        	var images = ['crisis_screenshot.png','traffic_screenshot.png','terrorist_screenshot.png','weather_screenshot.png','dengue_screenshot.png'];
+		if(window.location.href.indexOf("old") == -1) {
+			$.ajax({
+	            url: '/report/get_map_image',
+	            method:'GET'
+	        }).done(function (reponse) {
+	        	var images = ['crisis_screenshot.png','traffic_screenshot.png','terrorist_screenshot.png','weather_screenshot.png','dengue_screenshot.png'];
+	        	$.each(images, function(){
+				    $('#mapList').append('<li><img src="' + imgBase + this + '" /></li>'); 
+				});
+	        });
+	     } else {
+	     	$.ajax({
+	     	 }).done(function (reponse) {
+	     	var images = ['crisis_screenshot.png','traffic_screenshot.png','terrorist_screenshot.png','weather_screenshot.png','dengue_screenshot.png'];
         	$.each(images, function(){
-			    $('#mapList').append('<li><img src="' + imgBase + this + '" /></li>'); 
+			    $('#mapList').append('<li><img src="' + imgBase + this + '" /></li>');
+			 }); 
 			});
-        });
+	     }
 	</script>
 	<h1 style="text-align:center;" ><b>Prime Minister Report by CMS</b></h1>
 	<ol>
