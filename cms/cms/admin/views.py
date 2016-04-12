@@ -10,6 +10,7 @@ from ..dispatchers.pmodispatcher import PMODispatcher
 from django.template.defaulttags import register
 import json
 import requests
+from ..crisiscalculation.calculation import CrisisCalculator
 from django.contrib.auth.decorators import login_required
 
 # def healthCheck(request):
@@ -65,7 +66,7 @@ def get_address_from_lat_long(latlong):
     r = requests.get(url)
     result = r.json()
     address = ""
-    if (len(result.get('results'))>0):
+    if (len(result.get('results')) > 0):
         for x in result.get('results')[0].get('address_components'):
             address += x.get('long_name') + ', '
         return address[:-2]
@@ -159,6 +160,20 @@ def delete_event(request):
             e = Event.objects.get(id=t.event.id)
             e.delete()
         return HttpResponse("Success", content_type="text/plain")
+
+
+@login_required
+def crisis_calculator(request):
+    """
+        Show suggested crisis
+    """
+    if not is_admin(request.user):
+        return HttpResponseForbidden()
+    tabs = AdminTabViews()
+    tabs.set_active_tab('calculator')
+    crises = CrisisCalculator().check_crisis()
+    print crises
+    return render_tab_view(request, tabs, data={'crises': crises})
 
 
 @login_required
